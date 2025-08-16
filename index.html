@@ -87,6 +87,12 @@
     .badge{top:12px;right:12px;font-size:11px;padding:3px 6px}
   }
   .nav{margin-top:20px;color:var(--muted);font-size:12px}
+  .count-display{margin:8px 0;text-align:right}
+  .count-text{color:var(--muted);font-size:14px;font-weight:600}
+  @media(max-width:480px){
+    .count-display{margin:6px 0;text-align:center}
+    .count-text{font-size:13px}
+  }
 </style>
 </head>
 <body>
@@ -104,6 +110,9 @@
   </div>
   <div id="statusControls" class="controls">
     <span class="control-label">期間：</span>
+  </div>
+  <div class="count-display">
+    <span id="itemCount" class="count-text">0件の情報</span>
   </div>
   <div id="list" class="grid" aria-live="polite"></div>
   <div class="nav">※カードはXの投稿を埋め込んで表示します。投稿のURLをスプレッドシートに追加するだけで更新されます。</div>
@@ -358,6 +367,9 @@ function render(){
     const dateB = new Date(b.date || '2000-01-01');
     return sortOrder === 'desc' ? dateB - dateA : dateA - dateB;
   });
+  
+  // 件数表示を更新
+  document.getElementById('itemCount').textContent = `${filteredData.length}件の情報`;
   
   filteredData.forEach(it=> list.appendChild(card(it)));
 }
