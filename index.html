@@ -130,7 +130,7 @@ let DATA = [];
 document.getElementById('updated').textContent = UPDATED;
 let active = 'all';
 let sortOrder = 'desc'; // 'desc' or 'asc'
-let statusFilter = 'all'; // 'all', 'upcoming', 'current', 'ended'
+let statusFilter = 'current'; // 'upcoming', 'current', 'ended'
 // カテゴリボタン
 for(const t of types){
   const b = document.createElement('button');
@@ -162,15 +162,14 @@ for(const option of sortOptions){
 // 期間ステータスボタン
 const statusControls = document.getElementById('statusControls');
 const statusOptions = [
-  {value: 'all', label: 'すべて', icon: '●'},
-  {value: 'upcoming', label: '予定', icon: '📅'},
+  {value: 'ended', label: '終了', icon: '⚫'},
   {value: 'current', label: '開催中', icon: '🔴'},
-  {value: 'ended', label: '終了', icon: '⚫'}
+  {value: 'upcoming', label: '予定', icon: '📅'}
 ];
 
 for(const option of statusOptions){
   const b = document.createElement('button');
-  b.className = 'chip'; b.dataset.status = option.value; b.dataset.active = option.value==='all';
+  b.className = 'chip'; b.dataset.status = option.value; b.dataset.active = option.value==='current';
   b.innerHTML = `<span class="chip-icon">${option.icon}</span>${option.label}`;
   b.onclick = ()=>{
     statusFilter = option.value; 
@@ -331,7 +330,7 @@ function getEventStatus(item) {
   const startDate = item.start_date ? new Date(item.start_date) : null;
   const endDate = item.end_date ? new Date(item.end_date) : null;
   
-  if (!startDate && !endDate) return 'general'; // 一般投稿
+  if (!startDate && !endDate) return 'current'; // 日付なしは開催中扱い
   if (startDate && today < startDate) return 'upcoming'; // 予定
   if (endDate && today > endDate) return 'ended'; // 終了
   return 'current'; // 開催中
