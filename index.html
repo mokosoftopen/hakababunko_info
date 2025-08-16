@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>最新情報ポータル｜X埋め込み版（ダーク）</title>
+<meta name="description" content="XポストURLを記録するだけでカード表示。タップでXへ。Googleシート連携対応。">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="最新情報ポータル｜X埋め込み版">
+<meta name="twitter:description" content="グッズ・書籍・イベント・Web記事をXポストとして整理。">
+<meta name="twitter:image" content="ogp.jpg">
+<style>
+  :root{
+    --bg:#000000;
+    --panel:#16181c;
+    --ink:#e7e9ea;
+    --muted:#8b98a5;
+    --accent:#1d9bf0;
+    --goods:#f59e0b;
+    --books:#60a5fa;
+    --events:#22c55e;
+    --web:#f87171;
+    --radius:16px;
+  }
+  html,body{background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP","Segoe UI",Roboto,Helvetica,Arial,"Yu Gothic",Meiryo,sans-serif;}
+  a{color:var(--accent);}
+  .wrap{max-width:960px;margin:0 auto;padding:18px 16px 40px;}
+  header{display:flex;gap:12px;align-items:center;margin-bottom:8px}
+  .logo{width:44px;height:44px;border-radius:10px;background:#0a0a0a;object-fit:cover}
+  h1{font-size:clamp(20px,4.6vw,34px);margin:0}
+  .updated{color:var(--muted);font-size:13px;margin-top:2px}
+  .controls{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 12px;align-items:center}
+  .control-label{color:var(--muted);font-size:14px;font-weight:600;margin-right:4px;width:100%;margin-bottom:6px}
+  .chip{border:1px solid #2f3336;background:#0f1419;color:#cfd3d7;padding:10px 14px;border-radius:999px;cursor:pointer;font-weight:700;font-size:14px;min-height:44px;display:flex;align-items:center;justify-content:center}
+  .chip[data-active="true"]{outline:2px solid #273340;background:#0b1116}
+  @media(max-width:480px){
+    .controls{gap:6px;margin:10px 0 8px}
+    .chip{padding:8px 12px;font-size:13px;min-height:40px}
+    .control-label{font-size:13px;margin-bottom:4px}
+    h1{font-size:clamp(18px,5vw,28px)}
+  }
+  .chip[data-type="goods"]{--c:var(--goods)}
+  .chip[data-type="books"]{--c:var(--books)}
+  .chip[data-type="events"]{--c:var(--events)}
+  .chip[data-type="web"]{--c:var(--web)}
+  .chip[data-type="news"]{--c:#10b981}
+  .chip[data-type="sale"]{--c:#f59e0b}
+  .chip::before{content:"";display:inline-block;width:8px;height:8px;border-radius:999px;background:var(--c);margin-right:8px}
+  .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}
+  .card{grid-column:span 12;display:flex;flex-direction:column;gap:8px;background:var(--panel);border:1px solid #2f3336;border-radius:var(--radius);padding:14px;position:relative}
+  @media(min-width:720px){.card{grid-column:span 6}}
+  @media(max-width:480px){
+    .card{padding:12px;gap:6px}
+    .grid{gap:10px}
+    .wrap{padding:12px 12px 30px}
+  }
+  .card .twitter-tweet{width:100% !important;max-width:none !important;max-height:280px !important;overflow:hidden !important}
+  .kicker{font-size:12px;color:#cbd5e1;letter-spacing:.06em}
+  .title{font-size:18px;font-weight:800}
+  .meta{font-size:13px;color:var(--muted)}
+  .period{font-size:13px;font-weight:700;color:#cfd3d7}
+  .badge{position:absolute;top:14px;right:14px;color:#0b0b0b;padding:4px 8px;border-radius:999px;font-size:12px;font-weight:800;z-index:10}
+  .badge.goods{background:color-mix(in oklab,var(--goods) 85%,white 0%)}
+  .badge.books{background:color-mix(in oklab,var(--books) 85%,white 0%)}
+  .badge.events{background:color-mix(in oklab,var(--events) 85%,white 0%)}
+  .badge.web{background:color-mix(in oklab,var(--web) 85%,white 0%)}
+  .badge.news{background:#10b981}
+  .badge.sale{background:#f59e0b}
+  .tweet{min-height:300px;border-radius:12px;width:100%;position:relative}
+  .empty{display:grid;place-items:center;height:180px;background:#0e1116;border:1px dashed #2f3336;border-radius:12px;color:var(--muted);font-size:13px}
+  .thumbnail{width:100%;height:200px;object-fit:cover;border-radius:12px;background:#0e1116}
+  .thumbnail-placeholder{display:grid;place-items:center;height:200px;background:#0e1116;border:1px dashed #2f3336;border-radius:12px;color:var(--muted);font-size:13px}
+  .video-thumbnail{position:relative;width:100%;height:200px;border-radius:12px;background:#0e1116;overflow:hidden}
+  .video-play-icon{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:60px;height:60px;background:rgba(0,0,0,0.8);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:24px;pointer-events:none}
+  .content-text{margin-top:12px;color:var(--ink);font-size:14px;line-height:1.4}
+  .open{position:absolute;bottom:10px;right:10px;display:inline-flex;gap:6px;align-items:center;background:var(--accent);color:#00131f;text-decoration:none;padding:6px 10px;border-radius:8px;font-weight:800;font-size:12px;z-index:100;min-height:32px}
+  .open:hover{filter:brightness(1.08)}
+  @media(max-width:480px){
+    .open{padding:8px 12px;font-size:13px;min-height:36px}
+    .content-text{font-size:13px;line-height:1.3}
+    .thumbnail,.video-thumbnail{height:180px}
+    .thumbnail-placeholder{height:180px;font-size:12px}
+  }
+  .nav{margin-top:20px;color:var(--muted);font-size:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <img class="logo" src="logo.png" alt="ロゴ(任意)">
+    <div>
+      <h1>都市伝説解体センター｜最新情報ポータル</h1>
+      <div class="updated">更新：<time id="updated"></time></div>
+    </div>
+  </header>
+  <div id="controls" class="controls"></div>
+  <div id="sortControls" class="controls">
+    <span class="control-label">並び順：</span>
+  </div>
+  <div id="statusControls" class="controls">
+    <span class="control-label">期間：</span>
+  </div>
+  <div id="list" class="grid" aria-live="polite"></div>
+  <div class="nav">※カードはXの投稿を埋め込んで表示します。投稿のURLをスプレッドシートに追加するだけで更新されます。</div>
+</div>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<script>
+const UPDATED = '2025-08-13';
+const SPREADSHEET_ID = '1oFtEcREkdS2MiUpZw0CmIioTZ0lUcXQ4PIEKOpetjs4';
+const SHEET_NAME = 'csv';
+const FALLBACK = [
+  {type:'goods', url:'https://x.com/Interior/status/1787945072538230788', status:'公開', thumbnail:'', title:'', media_type:'', date:'2025-08-01', start_date:'2025-08-01', end_date:'2025-09-30'},
+  {type:'books', url:'https://x.com/Interior/status/1674889524172681217', status:'公開', thumbnail:'', title:'', media_type:'', date:'2025-07-15', start_date:'2025-09-01', end_date:'2025-10-14'},
+  {type:'events', url:'https://x.com/Interior/status/1749464285968447809', status:'公開', thumbnail:'', title:'', media_type:'', date:'2025-08-10', start_date:'2025-08-20', end_date:'2025-09-05'},
+  {type:'web', url:'https://x.com/Interior/status/1801696610237882605', status:'公開', thumbnail:'', title:'', media_type:'', date:'2025-08-10', start_date:'', end_date:''},
+  {type:'news', url:'https://x.com/Interior/status/1787945072538230788', status:'公開', thumbnail:'', title:'', media_type:'', date:'2025-08-13', start_date:'', end_date:''},
+  {type:'sale', url:'https://x.com/Interior/status/1674889524172681217', status:'公開', thumbnail:'', title:'', media_type:'', date:'2025-08-05', start_date:'2025-08-05', end_date:'2025-08-31'}
+];
+const $ = s=>document.querySelector(s);
+const controls = $('#controls');
+const list = $('#list');
+const labels = {all:'すべて', goods:'グッズ', books:'書籍', events:'イベント', web:'Web記事', news:'お知らせ', sale:'セール情報'};
+const types = ['all','goods','books','events','web','news','sale'];
+let DATA = [];
+document.getElementById('updated').textContent = UPDATED;
+let active = 'all';
+let sortOrder = 'desc'; // 'desc' or 'asc'
+let statusFilter = 'all'; // 'all', 'upcoming', 'current', 'ended'
+// カテゴリボタン
+for(const t of types){
+  const b = document.createElement('button');
+  b.className = 'chip'; b.dataset.type = t; b.dataset.active = t==='all';
+  b.textContent = labels[t];
+  b.onclick = ()=>{active=t; render(); [...controls.children].forEach(x=>x.dataset.active=(x===b));};
+  controls.appendChild(b);
+}
+
+// 並び順ボタン
+const sortControls = document.getElementById('sortControls');
+const sortOptions = [
+  {value: 'desc', label: '新しい順'},
+  {value: 'asc', label: '古い順'}
+];
+
+for(const option of sortOptions){
+  const b = document.createElement('button');
+  b.className = 'chip'; b.dataset.sort = option.value; b.dataset.active = option.value==='desc';
+  b.textContent = option.label;
+  b.onclick = ()=>{
+    sortOrder = option.value; 
+    render(); 
+    [...sortControls.children].forEach(x=>x.dataset && (x.dataset.active=(x===b)));
+  };
+  sortControls.appendChild(b);
+}
+
+// 期間ステータスボタン
+const statusControls = document.getElementById('statusControls');
+const statusOptions = [
+  {value: 'all', label: 'すべて'},
+  {value: 'upcoming', label: '予定'},
+  {value: 'current', label: '開催中'},
+  {value: 'ended', label: '終了'}
+];
+
+for(const option of statusOptions){
+  const b = document.createElement('button');
+  b.className = 'chip'; b.dataset.status = option.value; b.dataset.active = option.value==='all';
+  b.textContent = option.label;
+  b.onclick = ()=>{
+    statusFilter = option.value; 
+    render(); 
+    [...statusControls.children].forEach(x=>x.dataset && (x.dataset.active=(x===b)));
+  };
+  statusControls.appendChild(b);
+}
+async function fetchGoogleSheet(spreadsheetId, sheetName){
+  try{
+    const url = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/export?format=csv&gid=0`;
+    const res = await fetch(url, {cache:'no-store'});
+    if(!res.ok) throw new Error('Google Sheet fetch failed');
+    const text = await res.text();
+    const lines = text.trim().split(/\r?\n/);
+    const head = lines.shift().split(',').map(h => h.replace(/"/g, '').trim());
+    return lines.map(row=>{
+      const cols = row.split(',').map(col => col.replace(/"/g, '').trim());
+      const obj = {}; 
+      head.forEach((h,i)=> obj[h] = cols[i] || '');
+      return obj;
+    });
+  }catch(e){
+    console.warn(e); return null;
+  }
+}
+function parseTweetId(url){
+  const m = url.match(/status\/(\d{5,})/); return m? m[1] : null;
+}
+function card(item){
+  const wrap = document.createElement('article');
+  wrap.className = 'card';
+  wrap.dataset.type = item.type;
+  
+  // サムネイルがある場合とない場合で表示を切り替え
+  if(item.thumbnail && item.thumbnail.trim()){
+    const isVideo = item.media_type === 'video';
+    const isXVideoUrl = item.thumbnail.includes('x.com/i/status/') || item.thumbnail.includes('twitter.com/i/status/');
+    const title = item.title || '';
+    
+    if(isVideo || isXVideoUrl){
+      // X動画URLの場合は直接プレースホルダーを表示
+      if(isXVideoUrl){
+        wrap.innerHTML = `
+          <div class="thumbnail-placeholder">
+            <div style="font-size:48px;margin-bottom:8px;">🎥</div>
+            <div>動画コンテンツ</div>
+            <div style="font-size:12px;margin-top:4px;opacity:0.7;">クリックして動画を再生</div>
+          </div>
+          ${title ? `<div class="content-text">${title}</div>` : ''}
+          <div class="tweet" style="min-height:200px;margin-top:12px;">
+            <div class="empty">Xの本文を読み込み中…</div>
+          </div>
+          <a class="open" href="${item.url}" target="_blank" rel="noopener">Xで開く →</a>
+          <span class="badge ${item.type}">${labels[item.type]||''}</span>`;
+      } else {
+        // 通常の画像サムネイル（動画として表示）
+        wrap.innerHTML = `
+          <div class="video-thumbnail">
+            <img class="thumbnail" src="${item.thumbnail}" alt="動画サムネイル" onerror="this.style.display='none'; this.parentNode.nextElementSibling.style.display='grid';">
+            <div class="video-play-icon">▶</div>
+          </div>
+          <div class="thumbnail-placeholder" style="display:none;">
+            <div style="font-size:48px;margin-bottom:8px;">🎥</div>
+            <div>動画コンテンツ</div>
+          </div>
+          ${title ? `<div class="content-text">${title}</div>` : ''}
+          <div class="tweet" style="min-height:200px;margin-top:12px;">
+            <div class="empty">Xの本文を読み込み中…</div>
+          </div>
+          <a class="open" href="${item.url}" target="_blank" rel="noopener">Xで開く →</a>
+          <span class="badge ${item.type}">${labels[item.type]||''}</span>`;
+      }
+    } else {
+      // 通常の画像
+      wrap.innerHTML = `
+        <img class="thumbnail" src="${item.thumbnail}" alt="サムネイル" onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';">
+        <div class="thumbnail-placeholder" style="display:none;">画像を読み込めませんでした</div>
+        ${title ? `<div class="content-text">${title}</div>` : ''}
+        <div class="tweet" style="min-height:200px;margin-top:12px;">
+          <div class="empty">Xの本文を読み込み中…</div>
+        </div>
+        <a class="open" href="${item.url}" target="_blank" rel="noopener">Xで開く →</a>
+        <span class="badge ${item.type}">${labels[item.type]||''}</span>`;
+    }
+    // サムネイル表示の場合もX埋め込みを読み込む
+    const el = wrap.querySelector('.tweet');
+    const id = parseTweetId(item.url);
+    if(id && el){
+      const io = new IntersectionObserver((entries, obs)=>{
+        if(entries.some(e=>e.isIntersecting)){
+          if(window.twttr && twttr.widgets){
+            el.innerHTML = '';
+            twttr.widgets.createTweet(id, el, { 
+              theme:'dark', 
+              dnt:true,
+              conversation: 'none',
+              cards: 'hidden'  // メディアを非表示にして本文のみ
+            }).then((embedElement) => {
+              if (!embedElement) {
+                el.innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted);">本文を読み込めませんでした</div>';
+              }
+            }).catch(()=>{ 
+              el.innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted);">本文を読み込めませんでした</div>';
+            });
+          }
+          obs.disconnect();
+        }
+      }, {rootMargin:'200px'});
+      io.observe(el);
+    }
+    return wrap;
+  } else {
+    wrap.innerHTML = `
+      <div class="tweet empty">埋め込みを読み込み中…</div>
+      <a class="open" href="${item.url}" target="_blank" rel="noopener">Xで開く →</a>
+      <span class="badge ${item.type}">${labels[item.type]||''}</span>`;
+  }
+  const el = wrap.querySelector('.tweet');
+  const id = parseTweetId(item.url);
+  if(id){
+    const io = new IntersectionObserver((entries, obs)=>{
+      if(entries.some(e=>e.isIntersecting)){
+        if(window.twttr && twttr.widgets){
+          el.innerHTML = ''; // ローディング表示をクリア
+          twttr.widgets.createTweet(id, el, { 
+            theme:'dark', 
+            dnt:true,
+            conversation: 'none',
+            cards: 'visible'
+          }).then((embedElement) => {
+            if (!embedElement) {
+              el.innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted);">埋め込みを読み込めませんでした</div>';
+            }
+          }).catch(()=>{ 
+            el.innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted);">埋め込みを読み込めませんでした</div>';
+          });
+        }else{
+          el.innerHTML = `<blockquote class="twitter-tweet" data-theme="dark"><a href="${item.url}"></a></blockquote>`;
+        }
+        obs.disconnect();
+      }
+    }, {rootMargin:'200px'});
+    io.observe(el);
+  }else{
+    el.textContent = '無効なX URLです';
+  }
+  return wrap;
+}
+function getEventStatus(item) {
+  const today = new Date();
+  const startDate = item.start_date ? new Date(item.start_date) : null;
+  const endDate = item.end_date ? new Date(item.end_date) : null;
+  
+  if (!startDate && !endDate) return 'general'; // 一般投稿
+  if (startDate && today < startDate) return 'upcoming'; // 予定
+  if (endDate && today > endDate) return 'ended'; // 終了
+  return 'current'; // 開催中
+}
+
+function render(){
+  list.innerHTML = '';
+  let filteredData = DATA.filter(it=> it.status==='公開')
+      .filter(it=> active==='all'? true : it.type===active);
+  
+  // 期間ステータスでフィルタリング
+  if (statusFilter !== 'all') {
+    filteredData = filteredData.filter(it => {
+      const status = getEventStatus(it);
+      if (statusFilter === 'upcoming') return status === 'upcoming';
+      if (statusFilter === 'current') return status === 'current';
+      if (statusFilter === 'ended') return status === 'ended';
+      return true;
+    });
+  }
+  
+  // 日付でソート
+  filteredData.sort((a, b) => {
+    const dateA = new Date(a.date || '2000-01-01');
+    const dateB = new Date(b.date || '2000-01-01');
+    return sortOrder === 'desc' ? dateB - dateA : dateA - dateB;
+  });
+  
+  filteredData.forEach(it=> list.appendChild(card(it)));
+}
+(async function init(){
+  const sheetData = (SPREADSHEET_ID && !SPREADSHEET_ID.includes('<<')) ? 
+    await fetchGoogleSheet(SPREADSHEET_ID, SHEET_NAME) : null;
+  DATA = sheetData && Array.isArray(sheetData) ? sheetData : FALLBACK;
+  render();
+})();
+</script>
+</body>
+</html>
