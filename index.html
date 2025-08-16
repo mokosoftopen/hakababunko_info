@@ -47,6 +47,7 @@
   .chip[data-type="news"]{--c:#10b981}
   .chip[data-type="sale"]{--c:#f59e0b}
   .chip::before{content:"";display:inline-block;width:8px;height:8px;border-radius:999px;background:var(--c);margin-right:8px}
+  .chip-icon{display:inline-block;margin-right:6px;font-size:12px}
   .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}
   .card{grid-column:span 12;display:flex;flex-direction:column;gap:8px;background:var(--panel);border:1px solid #2f3336;border-radius:var(--radius);padding:14px;position:relative;box-shadow:0 2px 8px rgba(0,0,0,0.3)}
   @media(min-width:720px){.card{grid-column:span 6}}
@@ -142,14 +143,14 @@ for(const t of types){
 // 並び順ボタン
 const sortControls = document.getElementById('sortControls');
 const sortOptions = [
-  {value: 'desc', label: '新しい順'},
-  {value: 'asc', label: '古い順'}
+  {value: 'desc', label: '新しい順', icon: '▼'},
+  {value: 'asc', label: '古い順', icon: '▲'}
 ];
 
 for(const option of sortOptions){
   const b = document.createElement('button');
   b.className = 'chip'; b.dataset.sort = option.value; b.dataset.active = option.value==='desc';
-  b.textContent = option.label;
+  b.innerHTML = `<span class="chip-icon">${option.icon}</span>${option.label}`;
   b.onclick = ()=>{
     sortOrder = option.value; 
     render(); 
@@ -161,16 +162,16 @@ for(const option of sortOptions){
 // 期間ステータスボタン
 const statusControls = document.getElementById('statusControls');
 const statusOptions = [
-  {value: 'all', label: 'すべて'},
-  {value: 'upcoming', label: '予定'},
-  {value: 'current', label: '開催中'},
-  {value: 'ended', label: '終了'}
+  {value: 'all', label: 'すべて', icon: '●'},
+  {value: 'upcoming', label: '予定', icon: '📅'},
+  {value: 'current', label: '開催中', icon: '🔴'},
+  {value: 'ended', label: '終了', icon: '⚫'}
 ];
 
 for(const option of statusOptions){
   const b = document.createElement('button');
   b.className = 'chip'; b.dataset.status = option.value; b.dataset.active = option.value==='all';
-  b.textContent = option.label;
+  b.innerHTML = `<span class="chip-icon">${option.icon}</span>${option.label}`;
   b.onclick = ()=>{
     statusFilter = option.value; 
     render(); 
