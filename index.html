@@ -1,6 +1,22 @@
 <!doctype html>
 <html lang="ja">
 <head>
+<!-- 
+URLクエリパラメータによる初期表示制御
+
+使用可能なパラメータ:
+- category: カテゴリフィルター (all, goods, books, events, web, news, sale)
+- sort: 並び順 (desc=新しい順, asc=古い順)
+- status: 期間フィルター (upcoming=予定, current=開催中, ended=終了)
+
+使用例:
+?category=books&status=upcoming&sort=asc
+?category=events&status=current
+?category=goods
+?sort=asc&status=ended
+
+不正な値の場合はデフォルト値を使用: category=all, sort=desc, status=current
+-->
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
 <script>
@@ -104,6 +120,10 @@
     .count-text{font-size:13px}
   }
 </style>
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
 </head>
 <body>
 <div class="wrap">
@@ -129,7 +149,7 @@
 </div>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 <script>
-const UPDATED = '2025-08-13';
+const UPDATED_FALLBACK = '2025-08-13'; // フォールバック用の更新日
 const SPREADSHEET_ID = '1oFtEcREkdS2MiUpZw0CmIioTZ0lUcXQ4PIEKOpetjs4';
 const SHEET_NAME = 'csv';
 const FALLBACK = [
@@ -146,14 +166,21 @@ const list = $('#list');
 const labels = {all:'すべて', goods:'グッズ', books:'書籍', events:'イベント', web:'Web記事', news:'お知らせ', sale:'セール情報'};
 const types = ['all','goods','books','events','web','news','sale'];
 let DATA = [];
-document.getElementById('updated').textContent = UPDATED;
-let active = 'all';
-let sortOrder = 'desc'; // 'desc' or 'asc'
-let statusFilter = 'current'; // 'upcoming', 'current', 'ended'
+// 更新日時は後でGoogle Sheetsから取得して設定
+// URLクエリパラメータから初期値を取得
+const urlParams = new URLSearchParams(window.location.search);
+let active = urlParams.get('category') || 'all';
+let sortOrder = urlParams.get('sort') || 'desc'; // 'desc' or 'asc'
+let statusFilter = urlParams.get('status') || 'current'; // 'upcoming', 'current', 'ended'
+
+// 有効な値かチェック
+if (!['all','goods','books','events','web','news','sale'].includes(active)) active = 'all';
+if (!['desc','asc'].includes(sortOrder)) sortOrder = 'desc';
+if (!['upcoming','current','ended'].includes(statusFilter)) statusFilter = 'current';
 // カテゴリボタン
 for(const t of types){
   const b = document.createElement('button');
-  b.className = 'chip'; b.dataset.type = t; b.dataset.active = t==='all';
+  b.className = 'chip'; b.dataset.type = t; b.dataset.active = t===active;
   b.textContent = labels[t];
   b.onclick = ()=>{active=t; render(); [...controls.children].forEach(x=>x.dataset.active=(x===b));};
   controls.appendChild(b);
@@ -168,7 +195,7 @@ const sortOptions = [
 
 for(const option of sortOptions){
   const b = document.createElement('button');
-  b.className = 'chip'; b.dataset.sort = option.value; b.dataset.active = option.value==='desc';
+  b.className = 'chip'; b.dataset.sort = option.value; b.dataset.active = option.value===sortOrder;
   b.innerHTML = `<span class="chip-icon">${option.icon}</span>${option.label}`;
   b.onclick = ()=>{
     sortOrder = option.value; 
@@ -188,7 +215,7 @@ const statusOptions = [
 
 for(const option of statusOptions){
   const b = document.createElement('button');
-  b.className = 'chip'; b.dataset.status = option.value; b.dataset.active = option.value==='current';
+  b.className = 'chip'; b.dataset.status = option.value; b.dataset.active = option.value===statusFilter;
   b.innerHTML = `<span class="chip-icon">${option.icon}</span>${option.label}`;
   b.onclick = ()=>{
     statusFilter = option.value; 
@@ -215,6 +242,7 @@ async function fetchGoogleSheet(spreadsheetId, sheetName){
     console.warn(e); return null;
   }
 }
+
 function parseTweetId(url){
   const m = url.match(/status\/(\d{5,})/); return m? m[1] : null;
 }
@@ -395,9 +423,30 @@ function render(){
   filteredData.forEach(it=> list.appendChild(card(it)));
 }
 (async function init(){
+  // Google SheetsのCSVデータを取得
   const sheetData = (SPREADSHEET_ID && !SPREADSHEET_ID.includes('<<')) ? 
     await fetchGoogleSheet(SPREADSHEET_ID, SHEET_NAME) : null;
   DATA = sheetData && Array.isArray(sheetData) ? sheetData : FALLBACK;
+  
+  // データのdateフィールドから最新日付を取得して表示
+  const dates = DATA
+    .map(item => item.date)
+    .filter(date => date && date.trim())
+    .map(date => new Date(date))
+    .filter(date => !isNaN(date.getTime()));
+  
+  if(dates.length > 0){
+    const latestDate = new Date(Math.max(...dates));
+    const formattedDate = latestDate.toLocaleDateString('ja-JP', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    });
+    document.getElementById('updated').textContent = formattedDate;
+  } else {
+    document.getElementById('updated').textContent = UPDATED_FALLBACK;
+  }
+
   render();
 })();
 </script>
