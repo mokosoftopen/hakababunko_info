@@ -73,10 +73,47 @@ URLクエリパラメータによる初期表示制御
   .chip::before{content:"";display:inline-block;width:8px;height:8px;border-radius:999px;background:var(--c);margin-right:8px}
   .chip-icon{display:inline-block;margin-right:6px;font-size:12px}
   .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}
-  .card{grid-column:span 12;display:flex;flex-direction:column;gap:8px;background:var(--panel);border:1px solid #2f3336;border-radius:var(--radius);padding:14px;position:relative;box-shadow:0 2px 8px rgba(0,0,0,0.3)}
+  .card{grid-column:span 12;display:flex;flex-direction:column;gap:0;background:var(--panel);border:1px solid #2f3336;border-radius:var(--radius);padding:0;position:relative;box-shadow:0 2px 8px rgba(0,0,0,0.3);overflow:hidden}
+  .card-header{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;gap:12px;border-bottom:2px solid;min-height:52px;transition:background 0.3s ease}
+  .card-body{padding:14px}
+  .card-header.goods{background:linear-gradient(135deg,rgba(245,158,11,0.15),rgba(245,158,11,0.05));border-bottom-color:var(--goods)}
+  .card-header.books{background:linear-gradient(135deg,rgba(96,165,250,0.15),rgba(96,165,250,0.05));border-bottom-color:var(--books)}
+  .card-header.events{background:linear-gradient(135deg,rgba(34,197,94,0.15),rgba(34,197,94,0.05));border-bottom-color:var(--events)}
+  .card-header.web{background:linear-gradient(135deg,rgba(248,113,113,0.15),rgba(248,113,113,0.05));border-bottom-color:var(--web)}
+  .card-header.news{background:linear-gradient(135deg,rgba(16,185,129,0.15),rgba(16,185,129,0.05));border-bottom-color:#10b981}
+  .card-header.sale{background:linear-gradient(135deg,rgba(245,158,11,0.15),rgba(245,158,11,0.05));border-bottom-color:#f59e0b}
+  .card-header.status-current{background:linear-gradient(135deg,rgba(220,38,38,0.12),rgba(220,38,38,0.03))!important;border-bottom-color:#dc2626!important}
+  .card-header.status-upcoming{background:linear-gradient(135deg,rgba(59,130,246,0.12),rgba(59,130,246,0.03))!important;border-bottom-color:#2563eb!important}
+  .card-header.status-ended{background:linear-gradient(135deg,rgba(82,82,91,0.12),rgba(82,82,91,0.03))!important;border-bottom-color:#52525b!important}
+  .category-label{font-size:16px;font-weight:800;letter-spacing:0.03em;display:flex;align-items:center;gap:8px}
+  .category-label::before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;flex-shrink:0}
+  .card-header.goods .category-label::before{background:var(--goods)}
+  .card-header.books .category-label::before{background:var(--books)}
+  .card-header.events .category-label::before{background:var(--events)}
+  .card-header.web .category-label::before{background:var(--web)}
+  .card-header.news .category-label::before{background:#10b981}
+  .card-header.sale .category-label::before{background:#f59e0b}
+  .date-info{display:flex;flex-direction:column;align-items:flex-end;gap:2px;padding:8px 14px;border-radius:12px;min-width:140px}
+  .date-info-label{font-size:12px;font-weight:800;letter-spacing:0.05em;text-transform:uppercase}
+  .date-info-main{font-size:18px;font-weight:800;line-height:1.1;letter-spacing:0.01em}
+  .date-info-sub{font-size:11px;font-weight:600;opacity:0.8}
+  .date-info.current{background:rgba(239,68,68,0.95);color:#fff;border:2px solid #dc2626;box-shadow:0 0 12px rgba(239,68,68,0.4)}
+  .date-info.current .date-info-label{color:#fef2f2}
+  .date-info.upcoming{background:rgba(59,130,246,0.95);color:#fff;border:2px solid #2563eb;box-shadow:0 0 12px rgba(59,130,246,0.4)}
+  .date-info.upcoming .date-info-label{color:#eff6ff}
+  .date-info.ended{background:rgba(82,82,91,0.9);color:#e4e4e7;border:2px solid #52525b;box-shadow:0 0 8px rgba(0,0,0,0.3)}
+  .date-info.ended .date-info-label{color:#fafafa}
+  .date-info.none{background:rgba(255,255,255,0.08);color:var(--muted);border:2px solid rgba(255,255,255,0.15)}
   @media(min-width:720px){.card{grid-column:span 6}}
   @media(max-width:480px){
-    .card{padding:16px;gap:8px;margin-bottom:8px;box-shadow:0 4px 12px rgba(0,0,0,0.4);border:2px solid #3f4246}
+    .card{margin-bottom:8px;box-shadow:0 4px 12px rgba(0,0,0,0.4);border:2px solid #3f4246}
+    .card-header{padding:10px 14px;min-height:48px;gap:8px}
+    .card-body{padding:12px}
+    .category-label{font-size:14px}
+    .date-info{padding:6px 10px;min-width:120px}
+    .date-info-label{font-size:10px}
+    .date-info-main{font-size:16px}
+    .date-info-sub{font-size:10px}
     .grid{gap:16px}
     .wrap{padding:12px 12px 30px}
   }
@@ -85,14 +122,6 @@ URLクエリパラメータによる初期表示制御
   .title{font-size:18px;font-weight:800}
   .meta{font-size:13px;color:var(--muted)}
   .period{font-size:13px;font-weight:700;color:#cfd3d7}
-  .badge{position:absolute;top:14px;right:14px;color:#0b0b0b;padding:4px 8px;border-radius:999px;font-size:12px;font-weight:800;z-index:10;box-shadow:0 1px 3px rgba(0,0,0,0.3)}
-  .date-badge{position:absolute;top:14px;left:14px;background:rgba(0,0,0,0.8);color:#e7e9ea;padding:4px 8px;border-radius:999px;font-size:11px;font-weight:600;z-index:10;box-shadow:0 1px 3px rgba(0,0,0,0.5)}
-  .badge.goods{background:color-mix(in oklab,var(--goods) 85%,white 0%)}
-  .badge.books{background:color-mix(in oklab,var(--books) 85%,white 0%)}
-  .badge.events{background:color-mix(in oklab,var(--events) 85%,white 0%)}
-  .badge.web{background:color-mix(in oklab,var(--web) 85%,white 0%)}
-  .badge.news{background:#10b981}
-  .badge.sale{background:#f59e0b}
   .tweet{min-height:300px;border-radius:12px;width:100%;position:relative}
   .empty{display:grid;place-items:center;height:180px;background:#0e1116;border:1px dashed #2f3336;border-radius:12px;color:var(--muted);font-size:13px}
   .thumbnail{width:100%;height:200px;object-fit:contain;border-radius:12px;background:#0e1116}
@@ -102,15 +131,14 @@ URLクエリパラメータによる初期表示制御
   .thumbnail-link{display:block;text-decoration:none;color:inherit;transition:transform 0.2s ease}
   .thumbnail-link:hover{transform:scale(1.02)}
   .content-text{margin-top:12px;color:var(--ink);font-size:14px;line-height:1.4}
-  .open{position:absolute;bottom:10px;right:10px;display:inline-flex;gap:6px;align-items:center;background:var(--accent);color:#00131f;text-decoration:none;padding:6px 10px;border-radius:8px;font-weight:800;font-size:12px;z-index:100;min-height:32px}
+  .card-body{position:relative}
+  .open{position:absolute;bottom:14px;right:14px;display:inline-flex;gap:6px;align-items:center;background:var(--accent);color:#00131f;text-decoration:none;padding:6px 10px;border-radius:8px;font-weight:800;font-size:12px;z-index:100;min-height:32px}
   .open:hover{filter:brightness(1.08)}
   @media(max-width:480px){
-    .open{padding:8px 12px;font-size:13px;min-height:36px;box-shadow:0 2px 6px rgba(29,155,240,0.4)}
+    .open{padding:8px 12px;font-size:13px;min-height:36px;box-shadow:0 2px 6px rgba(29,155,240,0.4);bottom:12px;right:12px}
     .content-text{font-size:13px;line-height:1.3;margin-top:8px;padding:8px;background:rgba(255,255,255,0.03);border-radius:8px;border-left:3px solid var(--accent)}
     .thumbnail,.video-thumbnail{height:180px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.4)}
     .thumbnail-placeholder{height:180px;font-size:12px;border-radius:8px}
-    .badge{top:12px;right:12px;font-size:11px;padding:3px 6px}
-    .date-badge{top:12px;left:12px;font-size:10px;padding:3px 6px}
   }
   .nav{margin-top:20px;color:var(--muted);font-size:12px}
   .count-display{margin:8px 0;text-align:right}
@@ -118,6 +146,100 @@ URLクエリパラメータによる初期表示制御
   @media(max-width:480px){
     .count-display{margin:6px 0;text-align:center}
     .count-text{font-size:13px}
+  }
+  .calendar-btn{position:fixed;bottom:24px;right:24px;width:64px;height:64px;border-radius:50%;background:var(--accent);color:#00131f;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(29,155,240,0.4);display:flex;align-items:center;justify-content:center;font-size:28px;z-index:1000;transition:all 0.3s ease}
+  .calendar-btn:hover{transform:scale(1.1);box-shadow:0 6px 24px rgba(29,155,240,0.6)}
+  .calendar-btn:active{transform:scale(0.95)}
+  @media(max-width:480px){
+    .calendar-btn{width:56px;height:56px;bottom:20px;right:20px;font-size:24px}
+  }
+  .calendar-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);z-index:2000;display:none;align-items:center;justify-content:center;padding:20px}
+  .calendar-modal.active{display:flex}
+  .calendar-container{background:var(--panel);border:2px solid #2f3336;border-radius:20px;max-width:900px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.6)}
+  .calendar-header{display:flex;justify-content:space-between;align-items:center;padding:20px 70px 20px 24px;border-bottom:2px solid #2f3336;background:linear-gradient(135deg,rgba(29,155,240,0.1),rgba(29,155,240,0.05));position:relative}
+  .calendar-title{font-size:24px;font-weight:800;color:var(--ink)}
+  .calendar-nav{display:flex;gap:12px;flex-wrap:wrap}
+  .calendar-nav-btn{background:rgba(29,155,240,0.15);border:1px solid var(--accent);color:var(--accent);padding:8px 16px;border-radius:8px;cursor:pointer;font-weight:700;font-size:14px;transition:all 0.2s ease}
+  .calendar-nav-btn:hover{background:var(--accent);color:#00131f}
+  .calendar-close{position:absolute;top:20px;right:20px;background:rgba(255,255,255,0.1);border:1px solid #2f3336;color:var(--ink);width:40px;height:40px;border-radius:50%;cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;transition:all 0.2s ease}
+  .calendar-close:hover{background:rgba(255,0,0,0.2);border-color:#ef4444}
+  .calendar-body{padding:24px;position:relative}
+  .calendar-weekdays{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-bottom:12px}
+  .calendar-weekday{text-align:center;font-weight:700;font-size:13px;color:var(--muted);padding:8px}
+  .calendar-grid-wrapper{position:relative;min-height:400px}
+  .calendar-days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+  .calendar-day{min-height:70px;border:1px solid #2f3336;border-radius:8px;padding:4px;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;background:rgba(255,255,255,0.03);cursor:pointer;transition:all 0.2s ease;position:relative;overflow:visible}
+  .calendar-day:hover{background:rgba(29,155,240,0.1);border-color:var(--accent)}
+  .calendar-day.other-month{opacity:0.3}
+  .calendar-day.today{border-color:var(--accent);border-width:2px;box-shadow:0 0 0 2px rgba(29,155,240,0.3)}
+  .calendar-day-number{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:2px;align-self:center}
+  .calendar-day-events{width:100%;display:flex;flex-direction:column;gap:2px;overflow-y:auto;flex:1;margin-top:20px}
+  .calendar-event-item{width:100%;padding:4px 6px;border-radius:6px;font-size:11px;font-weight:600;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:flex;align-items:center;gap:4px;cursor:pointer}
+  .calendar-event-item::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;flex-shrink:0}
+  .calendar-event-item.goods{background:rgba(245,158,11,0.2);color:#fbbf24;border:1px solid rgba(245,158,11,0.3)}
+  .calendar-event-item.goods::before{background:var(--goods)}
+  .calendar-event-item.books{background:rgba(96,165,250,0.2);color:#93c5fd;border:1px solid rgba(96,165,250,0.3)}
+  .calendar-event-item.books::before{background:var(--books)}
+  .calendar-event-item.events{background:rgba(34,197,94,0.2);color:#4ade80;border:1px solid rgba(34,197,94,0.3)}
+  .calendar-event-item.events::before{background:var(--events)}
+  .calendar-event-item.web{background:rgba(248,113,113,0.2);color:#fca5a5;border:1px solid rgba(248,113,113,0.3)}
+  .calendar-event-item.web::before{background:var(--web)}
+  .calendar-event-item.news{background:rgba(16,185,129,0.2);color:#34d399;border:1px solid rgba(16,185,129,0.3)}
+  .calendar-event-item.news::before{background:#10b981}
+  .calendar-event-item.sale{background:rgba(245,158,11,0.2);color:#fbbf24;border:1px solid rgba(245,158,11,0.3)}
+  .calendar-event-item.sale::before{background:#f59e0b}
+  .calendar-events-layer{position:absolute;top:0;left:0;right:0;pointer-events:none;z-index:10}
+  .calendar-event-bar{position:absolute;height:20px;padding:2px 6px;border-radius:6px;font-size:10px;font-weight:600;line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;pointer-events:auto;transition:all 0.2s ease;border:1px solid;box-shadow:0 1px 3px rgba(0,0,0,0.3)}
+  .calendar-event-bar:hover{transform:translateY(-1px);box-shadow:0 3px 6px rgba(0,0,0,0.5);z-index:100}
+  .calendar-event-bar.goods{background:linear-gradient(135deg,rgba(245,158,11,0.95),rgba(245,158,11,0.85));color:#000;border-color:var(--goods)}
+  .calendar-event-bar.books{background:linear-gradient(135deg,rgba(96,165,250,0.95),rgba(96,165,250,0.85));color:#000;border-color:var(--books)}
+  .calendar-event-bar.events{background:linear-gradient(135deg,rgba(34,197,94,0.95),rgba(34,197,94,0.85));color:#000;border-color:var(--events)}
+  .calendar-event-bar.web{background:linear-gradient(135deg,rgba(248,113,113,0.95),rgba(248,113,113,0.85));color:#000;border-color:var(--web)}
+  .calendar-event-bar.news{background:linear-gradient(135deg,rgba(16,185,129,0.95),rgba(16,185,129,0.85));color:#000;border-color:#10b981}
+  .calendar-event-bar.sale{background:linear-gradient(135deg,rgba(245,158,11,0.95),rgba(245,158,11,0.85));color:#000;border-color:#f59e0b}
+  .day-events-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);backdrop-filter:blur(8px);z-index:3000;display:none;align-items:center;justify-content:center;padding:20px}
+  .day-events-modal.active{display:flex}
+  .day-events-container{background:var(--panel);border:2px solid #2f3336;border-radius:16px;max-width:600px;width:100%;max-height:80vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.6)}
+  .day-events-header{display:flex;justify-content:space-between;align-items:center;padding:20px 60px 20px 20px;border-bottom:2px solid #2f3336;background:linear-gradient(135deg,rgba(29,155,240,0.1),rgba(29,155,240,0.05));position:relative}
+  .day-events-title{font-size:20px;font-weight:800;color:var(--ink)}
+  .day-events-close{position:absolute;top:16px;right:16px;background:rgba(255,255,255,0.1);border:1px solid #2f3336;color:var(--ink);width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:all 0.2s ease}
+  .day-events-close:hover{background:rgba(255,0,0,0.2);border-color:#ef4444}
+  .day-events-list{padding:16px}
+  .day-event-card{background:rgba(255,255,255,0.05);border:1px solid #2f3336;border-radius:12px;padding:16px;margin-bottom:12px;cursor:pointer;transition:all 0.2s ease}
+  .day-event-card:hover{background:rgba(29,155,240,0.1);border-color:var(--accent);transform:translateX(4px)}
+  .day-event-card:last-child{margin-bottom:0}
+  .day-event-type{font-size:12px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+  .day-event-type::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%}
+  .day-event-type.goods{color:var(--goods)}
+  .day-event-type.goods::before{background:var(--goods)}
+  .day-event-type.books{color:var(--books)}
+  .day-event-type.books::before{background:var(--books)}
+  .day-event-type.events{color:var(--events)}
+  .day-event-type.events::before{background:var(--events)}
+  .day-event-type.web{color:var(--web)}
+  .day-event-type.web::before{background:var(--web)}
+  .day-event-type.news{color:#10b981}
+  .day-event-type.news::before{background:#10b981}
+  .day-event-type.sale{color:#f59e0b}
+  .day-event-type.sale::before{background:#f59e0b}
+  .day-event-content{font-size:14px;color:var(--ink);line-height:1.5}
+  .day-event-period{font-size:12px;color:var(--muted);margin-top:8px}
+  @media(max-width:768px){
+    .calendar-container{max-width:100%;border-radius:16px}
+    .calendar-header{padding:16px 60px 16px 16px;flex-direction:column;align-items:flex-start;gap:12px}
+    .calendar-title{font-size:20px}
+    .calendar-nav{gap:8px}
+    .calendar-nav-btn{padding:6px 12px;font-size:13px}
+    .calendar-close{top:16px;right:16px;width:36px;height:36px;font-size:18px}
+    .calendar-body{padding:16px}
+    .calendar-day{padding:6px;min-height:60px}
+    .calendar-day-number{font-size:11px;margin-bottom:2px}
+    .calendar-event-item{font-size:9px;padding:2px 4px}
+    .day-events-container{max-width:100%;border-radius:12px}
+    .day-events-header{padding:16px 50px 16px 16px}
+    .day-events-title{font-size:18px}
+    .day-event-card{padding:12px}
+    .day-event-content{font-size:13px}
   }
 </style>
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
@@ -147,6 +269,51 @@ URLクエリパラメータによる初期表示制御
   <div id="list" class="grid" aria-live="polite"></div>
   <div class="nav">※情報は古い場合がありますので予めご了承ください。</div>
 </div>
+
+<!-- カレンダーボタン -->
+<button class="calendar-btn" id="calendarBtn" aria-label="カレンダーを開く">📅</button>
+
+<!-- 日付イベント選択モーダル -->
+<div class="day-events-modal" id="dayEventsModal">
+  <div class="day-events-container">
+    <div class="day-events-header">
+      <div class="day-events-title" id="dayEventsTitle">2025年1月1日</div>
+      <button class="day-events-close" id="dayEventsClose">✕</button>
+    </div>
+    <div class="day-events-list" id="dayEventsList"></div>
+  </div>
+</div>
+
+<!-- カレンダーモーダル -->
+<div class="calendar-modal" id="calendarModal">
+  <div class="calendar-container">
+    <div class="calendar-header">
+      <div class="calendar-title" id="calendarMonthTitle">2025年1月</div>
+      <div class="calendar-nav">
+        <button class="calendar-nav-btn" id="prevMonth">← 前月</button>
+        <button class="calendar-nav-btn" id="currentMonth">今月</button>
+        <button class="calendar-nav-btn" id="nextMonth">翌月 →</button>
+      </div>
+      <button class="calendar-close" id="calendarClose">✕</button>
+    </div>
+    <div class="calendar-body">
+      <div class="calendar-weekdays">
+        <div class="calendar-weekday">日</div>
+        <div class="calendar-weekday">月</div>
+        <div class="calendar-weekday">火</div>
+        <div class="calendar-weekday">水</div>
+        <div class="calendar-weekday">木</div>
+        <div class="calendar-weekday">金</div>
+        <div class="calendar-weekday">土</div>
+      </div>
+      <div class="calendar-grid-wrapper">
+        <div class="calendar-days" id="calendarDays"></div>
+        <div class="calendar-events-layer" id="calendarEventsLayer"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 <script>
 const UPDATED_FALLBACK = '2025-08-13'; // フォールバック用の更新日
@@ -250,14 +417,70 @@ function card(item){
   const wrap = document.createElement('article');
   wrap.className = 'card';
   wrap.dataset.type = item.type;
-  
+
   // 日付表示用の関数
   function formatDate(dateStr) {
     if (!dateStr) return '';
     const date = new Date(dateStr);
     return `${date.getMonth() + 1}/${date.getDate()}`;
   }
-  
+
+  // 日程情報を整形する関数
+  function getDateInfo(item) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const startDate = item.start_date ? new Date(item.start_date) : null;
+    const endDate = item.end_date ? new Date(item.end_date) : null;
+
+    if (startDate) startDate.setHours(0, 0, 0, 0);
+    if (endDate) endDate.setHours(0, 0, 0, 0);
+
+    // 日付がない場合は開催中として扱う
+    if (!startDate && !endDate) {
+      return { status: 'current', label: '', mainDate: '開催中', subDate: '' };
+    }
+
+    // 終了判定
+    if (endDate && today > endDate) {
+      const dateText = startDate ? `${formatDate(item.start_date)}〜${formatDate(item.end_date)}` : `〜${formatDate(item.end_date)}`;
+      return { status: 'ended', label: '終了', mainDate: dateText, subDate: '' };
+    }
+
+    // 予定判定（開始前）
+    if (startDate && today < startDate) {
+      const mainDate = formatDate(item.start_date);
+      const subDate = endDate ? `〜${formatDate(item.end_date)}` : '';
+      return { status: 'upcoming', label: '予定', mainDate: `${mainDate}から`, subDate: subDate };
+    }
+
+    // 開催中判定
+    if (startDate && (!endDate || today <= endDate)) {
+      if (endDate) {
+        return { status: 'current', label: '開催中', mainDate: `${formatDate(item.end_date)}まで`, subDate: `${formatDate(item.start_date)}〜` };
+      } else {
+        return { status: 'current', label: '開催中', mainDate: `${formatDate(item.start_date)}〜`, subDate: '' };
+      }
+    }
+
+    // フォールバック
+    return { status: 'none', label: '', mainDate: formatDate(item.date) || '日付未定', subDate: '' };
+  }
+
+  const dateInfo = getDateInfo(item);
+
+  // ヘッダーHTMLを生成
+  const statusClass = dateInfo.status !== 'none' ? `status-${dateInfo.status}` : '';
+  const headerHTML = `
+    <div class="card-header ${item.type} ${statusClass}">
+      <div class="category-label">${labels[item.type] || ''}</div>
+      <div class="date-info ${dateInfo.status}">
+        ${dateInfo.label ? `<div class="date-info-label">${dateInfo.label}</div>` : ''}
+        <div class="date-info-main">${dateInfo.mainDate}</div>
+        ${dateInfo.subDate ? `<div class="date-info-sub">${dateInfo.subDate}</div>` : ''}
+      </div>
+    </div>`;
+
   // サムネイルがある場合とない場合で表示を切り替え
   if(item.thumbnail && item.thumbnail.trim()){
     const isVideo = item.media_type === 'video';
@@ -268,55 +491,58 @@ function card(item){
       // X動画URLの場合は直接プレースホルダーを表示
       if(isXVideoUrl){
         wrap.innerHTML = `
-          <a href="${item.url}" target="_blank" rel="noopener" class="thumbnail-link">
-            <div class="thumbnail-placeholder">
-              <div style="font-size:48px;margin-bottom:8px;">🎥</div>
-              <div>動画コンテンツ</div>
-              <div style="font-size:12px;margin-top:4px;opacity:0.7;">クリックして動画を再生</div>
+          ${headerHTML}
+          <div class="card-body">
+            <a href="${item.url}" target="_blank" rel="noopener" class="thumbnail-link">
+              <div class="thumbnail-placeholder">
+                <div style="font-size:48px;margin-bottom:8px;">🎥</div>
+                <div>動画コンテンツ</div>
+                <div style="font-size:12px;margin-top:4px;opacity:0.7;">クリックして動画を再生</div>
+              </div>
+            </a>
+            ${title ? `<div class="content-text">${title}</div>` : ''}
+            <div class="tweet" style="min-height:200px;margin-top:12px;">
+              <div class="empty">Xの本文を読み込み中…</div>
             </div>
-          </a>
-          ${title ? `<div class="content-text">${title}</div>` : ''}
-          <div class="tweet" style="min-height:200px;margin-top:12px;">
-            <div class="empty">Xの本文を読み込み中…</div>
-          </div>
-          <a class="open" href="${item.url}" target="_blank" rel="noopener">Xで開く →</a>
-          <span class="badge ${item.type}">${labels[item.type]||''}</span>
-          <span class="date-badge">${formatDate(item.date)}</span>`;
+            <a class="open" href="${item.url}" target="_blank" rel="noopener">Xで開く →</a>
+          </div>`;
       } else {
         // 通常の画像サムネイル（動画として表示）
         wrap.innerHTML = `
-          <a href="${item.url}" target="_blank" rel="noopener" class="thumbnail-link">
-            <div class="video-thumbnail">
-              <img class="thumbnail" src="${item.thumbnail}" alt="動画サムネイル" onerror="this.style.display='none'; this.parentNode.nextElementSibling.style.display='grid';">
-              <div class="video-play-icon">▶</div>
+          ${headerHTML}
+          <div class="card-body">
+            <a href="${item.url}" target="_blank" rel="noopener" class="thumbnail-link">
+              <div class="video-thumbnail">
+                <img class="thumbnail" src="${item.thumbnail}" alt="動画サムネイル" onerror="this.style.display='none'; this.parentNode.nextElementSibling.style.display='grid';">
+                <div class="video-play-icon">▶</div>
+              </div>
+              <div class="thumbnail-placeholder" style="display:none;">
+                <div style="font-size:48px;margin-bottom:8px;">🎥</div>
+                <div>動画コンテンツ</div>
+              </div>
+            </a>
+            ${title ? `<div class="content-text">${title}</div>` : ''}
+            <div class="tweet" style="min-height:200px;margin-top:12px;">
+              <div class="empty">Xの本文を読み込み中…</div>
             </div>
-            <div class="thumbnail-placeholder" style="display:none;">
-              <div style="font-size:48px;margin-bottom:8px;">🎥</div>
-              <div>動画コンテンツ</div>
-            </div>
-          </a>
-          ${title ? `<div class="content-text">${title}</div>` : ''}
-          <div class="tweet" style="min-height:200px;margin-top:12px;">
-            <div class="empty">Xの本文を読み込み中…</div>
-          </div>
-          <a class="open" href="${item.url}" target="_blank" rel="noopener">Xで開く →</a>
-          <span class="badge ${item.type}">${labels[item.type]||''}</span>
-          <span class="date-badge">${formatDate(item.date)}</span>`;
+            <a class="open" href="${item.url}" target="_blank" rel="noopener">Xで開く →</a>
+          </div>`;
       }
     } else {
       // 通常の画像
       wrap.innerHTML = `
-        <a href="${item.url}" target="_blank" rel="noopener" class="thumbnail-link">
-          <img class="thumbnail" src="${item.thumbnail}" alt="サムネイル" onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';">
-          <div class="thumbnail-placeholder" style="display:none;">画像を読み込めませんでした</div>
-        </a>
-        ${title ? `<div class="content-text">${title}</div>` : ''}
-        <div class="tweet" style="min-height:200px;margin-top:12px;">
-          <div class="empty">Xの本文を読み込み中…</div>
-        </div>
-        <a class="open" href="${item.url}" target="_blank" rel="noopener">Xで開く →</a>
-        <span class="badge ${item.type}">${labels[item.type]||''}</span>
-        <span class="date-badge">${formatDate(item.date)}</span>`;
+        ${headerHTML}
+        <div class="card-body">
+          <a href="${item.url}" target="_blank" rel="noopener" class="thumbnail-link">
+            <img class="thumbnail" src="${item.thumbnail}" alt="サムネイル" onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';">
+            <div class="thumbnail-placeholder" style="display:none;">画像を読み込めませんでした</div>
+          </a>
+          ${title ? `<div class="content-text">${title}</div>` : ''}
+          <div class="tweet" style="min-height:200px;margin-top:12px;">
+            <div class="empty">Xの本文を読み込み中…</div>
+          </div>
+          <a class="open" href="${item.url}" target="_blank" rel="noopener">Xで開く →</a>
+        </div>`;
     }
     // サムネイル表示の場合もX埋め込みを読み込む
     const el = wrap.querySelector('.tweet');
@@ -347,10 +573,11 @@ function card(item){
     return wrap;
   } else {
     wrap.innerHTML = `
-      <div class="tweet empty">埋め込みを読み込み中…</div>
-      <a class="open" href="${item.url}" target="_blank" rel="noopener">Xで開く →</a>
-      <span class="badge ${item.type}">${labels[item.type]||''}</span>
-      <span class="date-badge">${formatDate(item.date)}</span>`;
+      ${headerHTML}
+      <div class="card-body">
+        <div class="tweet empty">埋め込みを読み込み中…</div>
+        <a class="open" href="${item.url}" target="_blank" rel="noopener">Xで開く →</a>
+      </div>`;
   }
   const el = wrap.querySelector('.tweet');
   const id = parseTweetId(item.url);
@@ -422,6 +649,393 @@ function render(){
   
   filteredData.forEach(it=> list.appendChild(card(it)));
 }
+
+// カレンダー機能
+let currentCalendarDate = new Date();
+
+function renderCalendar(year, month) {
+  const calendarDays = document.getElementById('calendarDays');
+  const calendarEventsLayer = document.getElementById('calendarEventsLayer');
+  const calendarMonthTitle = document.getElementById('calendarMonthTitle');
+
+  // タイトル更新
+  calendarMonthTitle.textContent = `${year}年${month + 1}月`;
+
+  // 月の最初と最後の日
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+  const firstDayOfWeek = firstDay.getDay();
+  const daysInMonth = lastDay.getDate();
+
+  // 前月の日数
+  const prevMonthLastDay = new Date(year, month, 0).getDate();
+
+  // カレンダーをクリア
+  calendarDays.innerHTML = '';
+  calendarEventsLayer.innerHTML = '';
+
+  // 今日の日付
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  // イベントを期間イベントと単日イベントに分類
+  const multiDayEvents = [];
+  const singleDayEvents = {};
+
+  DATA.forEach(item => {
+    if (item.status !== '公開') return;
+
+    const startDate = item.start_date ? new Date(item.start_date) : null;
+    const endDate = item.end_date ? new Date(item.end_date) : null;
+
+    if (!startDate) return;
+
+    startDate.setHours(0, 0, 0, 0);
+    if (endDate) endDate.setHours(0, 0, 0, 0);
+
+    // 期間イベント（2日以上）と単日イベントを分類
+    const isMultiDay = endDate && startDate.getTime() !== endDate.getTime();
+
+    if (isMultiDay) {
+      // 表示月と重なる期間イベントのみ追加
+      const monthStart = new Date(year, month, 1);
+      const monthEnd = new Date(year, month + 1, 0);
+      monthStart.setHours(0, 0, 0, 0);
+      monthEnd.setHours(0, 0, 0, 0);
+
+      if (endDate >= monthStart && startDate <= monthEnd) {
+        multiDayEvents.push({...item, startDate, endDate});
+      }
+    } else {
+      // 単日イベント
+      const dateKey = `${startDate.getFullYear()}-${startDate.getMonth()}-${startDate.getDate()}`;
+      if (!singleDayEvents[dateKey]) singleDayEvents[dateKey] = [];
+      singleDayEvents[dateKey].push(item);
+    }
+  });
+
+  // 前月の日付を表示
+  for (let i = firstDayOfWeek - 1; i >= 0; i--) {
+    const day = prevMonthLastDay - i;
+    const dayElement = document.createElement('div');
+    dayElement.className = 'calendar-day other-month';
+    dayElement.innerHTML = `<div class="calendar-day-number">${day}</div>`;
+    calendarDays.appendChild(dayElement);
+  }
+
+  // 当月の日付を表示
+  const dayElements = [];
+  for (let day = 1; day <= daysInMonth; day++) {
+    const dayElement = document.createElement('div');
+    const currentDate = new Date(year, month, day);
+    currentDate.setHours(0, 0, 0, 0);
+
+    dayElement.className = 'calendar-day';
+    dayElement.dataset.date = `${year}-${month}-${day}`;
+
+    // 今日かどうかチェック
+    if (currentDate.getTime() === today.getTime()) {
+      dayElement.classList.add('today');
+    }
+
+    // 日付番号
+    const dayNumber = document.createElement('div');
+    dayNumber.className = 'calendar-day-number';
+    dayNumber.textContent = day;
+    dayElement.appendChild(dayNumber);
+
+    // 単日イベント表示
+    const dateKey = `${year}-${month}-${day}`;
+    if (singleDayEvents[dateKey] && singleDayEvents[dateKey].length > 0) {
+      const eventsContainer = document.createElement('div');
+      eventsContainer.className = 'calendar-day-events';
+
+      // 単日イベントを表示
+      singleDayEvents[dateKey].forEach(event => {
+        const eventItem = document.createElement('div');
+        eventItem.className = `calendar-event-item ${event.type}`;
+
+        // 本文を取得（title フィールドから最大50文字）
+        let eventText = '';
+        if (event.title && event.title.trim()) {
+          eventText = event.title.trim();
+          if (eventText.length > 50) {
+            eventText = eventText.substring(0, 50) + '...';
+          }
+        } else {
+          eventText = labels[event.type] || '';
+        }
+
+        eventItem.textContent = eventText;
+        eventItem.title = event.title && event.title.trim() ? event.title : labels[event.type];
+
+        // クリックでXポストを開く
+        eventItem.addEventListener('click', (e) => {
+          e.stopPropagation();
+          window.open(event.url, '_blank');
+        });
+
+        eventsContainer.appendChild(eventItem);
+      });
+
+      dayElement.appendChild(eventsContainer);
+    }
+
+    // 日付セルクリックでイベント一覧を表示
+    dayElement.addEventListener('click', () => {
+      showDayEvents(year, month, day);
+    });
+
+    calendarDays.appendChild(dayElement);
+    dayElements.push(dayElement);
+  }
+
+  // 翌月の日付を表示（7の倍数になるまで）
+  const totalCells = firstDayOfWeek + daysInMonth;
+  const remainingCells = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
+  for (let day = 1; day <= remainingCells; day++) {
+    const dayElement = document.createElement('div');
+    dayElement.className = 'calendar-day other-month';
+    dayElement.innerHTML = `<div class="calendar-day-number">${day}</div>`;
+    calendarDays.appendChild(dayElement);
+  }
+
+  // 期間イベントバーを描画
+  setTimeout(() => {
+    multiDayEvents.forEach((event, eventIndex) => {
+      const {startDate, endDate} = event;
+
+      // 表示月内の開始日と終了日を計算
+      const monthStart = new Date(year, month, 1);
+      const monthEnd = new Date(year, month + 1, 0);
+      monthStart.setHours(0, 0, 0, 0);
+      monthEnd.setHours(0, 0, 0, 0);
+
+      const displayStart = startDate < monthStart ? monthStart : startDate;
+      const displayEnd = endDate > monthEnd ? monthEnd : endDate;
+
+      // 開始日のセルインデックスを計算（前月の日数を考慮）
+      const startDay = displayStart.getDate();
+      const endDay = displayEnd.getDate();
+      const startCellIndex = firstDayOfWeek + startDay - 1;
+      const endCellIndex = firstDayOfWeek + endDay - 1;
+
+      // イベントが複数行にまたがる可能性があるので、行ごとに分割
+      let currentCellIndex = startCellIndex;
+      let barIndex = 0;
+
+      while (currentCellIndex <= endCellIndex) {
+        const currentRow = Math.floor(currentCellIndex / 7);
+        const rowStartIndex = currentRow * 7;
+        const rowEndIndex = rowStartIndex + 6;
+
+        // この行でのイベントバーの開始と終了
+        const barStart = currentCellIndex;
+        const barEnd = Math.min(endCellIndex, rowEndIndex);
+        const barLength = barEnd - barStart + 1;
+
+        // セルの位置を取得
+        const startCell = calendarDays.children[barStart];
+        if (!startCell) {
+          currentCellIndex = rowEndIndex + 1;
+          continue;
+        }
+
+        const rect = startCell.getBoundingClientRect();
+        const parentRect = calendarDays.getBoundingClientRect();
+
+        // イベントバーを作成
+        const eventBar = document.createElement('div');
+        eventBar.className = `calendar-event-bar ${event.type}`;
+
+        // 本文を取得（title フィールドから最大100文字）
+        let eventText = '';
+        if (event.title && event.title.trim()) {
+          eventText = event.title.trim();
+          if (eventText.length > 100) {
+            eventText = eventText.substring(0, 100) + '...';
+          }
+        } else {
+          eventText = labels[event.type] || '';
+        }
+
+        eventBar.textContent = eventText;
+        eventBar.title = event.title && event.title.trim() ? event.title : labels[event.type];
+
+        // クリックでXポストを開く
+        eventBar.addEventListener('click', () => {
+          window.open(event.url, '_blank');
+        });
+
+        // 位置とサイズを計算
+        const cellWidth = rect.width;
+        const cellGap = 6; // grid gap
+        const top = rect.top - parentRect.top + 24 + (barIndex * 22);
+        const left = rect.left - parentRect.left;
+        const width = (cellWidth * barLength) + (cellGap * (barLength - 1));
+
+        eventBar.style.top = `${top}px`;
+        eventBar.style.left = `${left}px`;
+        eventBar.style.width = `${width}px`;
+
+        calendarEventsLayer.appendChild(eventBar);
+
+        // 次の行へ
+        currentCellIndex = rowEndIndex + 1;
+        barIndex++;
+      }
+    });
+  }, 0);
+}
+
+// 日付イベント選択モーダル表示関数
+function showDayEvents(year, month, day) {
+  const selectedDate = new Date(year, month, day);
+  selectedDate.setHours(0, 0, 0, 0);
+
+  // その日のイベントを取得（期間イベントと単日イベント両方）
+  const dayEvents = [];
+
+  DATA.forEach(item => {
+    if (item.status !== '公開') return;
+
+    const startDate = item.start_date ? new Date(item.start_date) : null;
+    const endDate = item.end_date ? new Date(item.end_date) : null;
+
+    if (!startDate) return;
+
+    startDate.setHours(0, 0, 0, 0);
+    if (endDate) endDate.setHours(0, 0, 0, 0);
+
+    // 選択日がイベント期間内にあるかチェック
+    const isInRange = endDate
+      ? (selectedDate >= startDate && selectedDate <= endDate)
+      : (selectedDate.getTime() === startDate.getTime());
+
+    if (isInRange) {
+      dayEvents.push({...item, startDate, endDate});
+    }
+  });
+
+  // イベントがない場合は何もしない
+  if (dayEvents.length === 0) return;
+
+  // 1件のみの場合は直接開く
+  if (dayEvents.length === 1) {
+    window.open(dayEvents[0].url, '_blank');
+    return;
+  }
+
+  // 複数イベントの場合はモーダルで選択
+  const dayEventsModal = document.getElementById('dayEventsModal');
+  const dayEventsTitle = document.getElementById('dayEventsTitle');
+  const dayEventsList = document.getElementById('dayEventsList');
+
+  // タイトル設定
+  dayEventsTitle.textContent = `${year}年${month + 1}月${day}日の予定`;
+
+  // イベント一覧を表示
+  dayEventsList.innerHTML = '';
+  dayEvents.forEach(event => {
+    const card = document.createElement('div');
+    card.className = 'day-event-card';
+
+    const typeLabel = document.createElement('div');
+    typeLabel.className = `day-event-type ${event.type}`;
+    typeLabel.textContent = labels[event.type] || '';
+
+    const content = document.createElement('div');
+    content.className = 'day-event-content';
+
+    // 本文を表示（最大200文字）
+    let eventText = event.title && event.title.trim() ? event.title.trim() : 'タイトルなし';
+    if (eventText.length > 200) {
+      eventText = eventText.substring(0, 200) + '...';
+    }
+    content.textContent = eventText;
+
+    // 期間表示
+    if (event.start_date && event.end_date && event.start_date !== event.end_date) {
+      const period = document.createElement('div');
+      period.className = 'day-event-period';
+      const formatDate = (dateStr) => {
+        const d = new Date(dateStr);
+        return `${d.getMonth() + 1}/${d.getDate()}`;
+      };
+      period.textContent = `期間: ${formatDate(event.start_date)} 〜 ${formatDate(event.end_date)}`;
+      card.appendChild(typeLabel);
+      card.appendChild(content);
+      card.appendChild(period);
+    } else {
+      card.appendChild(typeLabel);
+      card.appendChild(content);
+    }
+
+    // クリックでXポストを開く
+    card.addEventListener('click', () => {
+      window.open(event.url, '_blank');
+    });
+
+    dayEventsList.appendChild(card);
+  });
+
+  dayEventsModal.classList.add('active');
+}
+
+// 日付イベント選択モーダルの開閉
+const dayEventsModal = document.getElementById('dayEventsModal');
+const dayEventsClose = document.getElementById('dayEventsClose');
+
+dayEventsClose.addEventListener('click', () => {
+  dayEventsModal.classList.remove('active');
+});
+
+dayEventsModal.addEventListener('click', (e) => {
+  if (e.target === dayEventsModal) {
+    dayEventsModal.classList.remove('active');
+  }
+});
+
+// カレンダーモーダルの開閉
+const calendarBtn = document.getElementById('calendarBtn');
+const calendarModal = document.getElementById('calendarModal');
+const calendarClose = document.getElementById('calendarClose');
+const prevMonthBtn = document.getElementById('prevMonth');
+const currentMonthBtn = document.getElementById('currentMonth');
+const nextMonthBtn = document.getElementById('nextMonth');
+
+calendarBtn.addEventListener('click', () => {
+  calendarModal.classList.add('active');
+  currentCalendarDate = new Date();
+  renderCalendar(currentCalendarDate.getFullYear(), currentCalendarDate.getMonth());
+});
+
+calendarClose.addEventListener('click', () => {
+  calendarModal.classList.remove('active');
+});
+
+calendarModal.addEventListener('click', (e) => {
+  if (e.target === calendarModal) {
+    calendarModal.classList.remove('active');
+  }
+});
+
+// 月切り替え
+prevMonthBtn.addEventListener('click', () => {
+  currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1);
+  renderCalendar(currentCalendarDate.getFullYear(), currentCalendarDate.getMonth());
+});
+
+currentMonthBtn.addEventListener('click', () => {
+  currentCalendarDate = new Date();
+  renderCalendar(currentCalendarDate.getFullYear(), currentCalendarDate.getMonth());
+});
+
+nextMonthBtn.addEventListener('click', () => {
+  currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1);
+  renderCalendar(currentCalendarDate.getFullYear(), currentCalendarDate.getMonth());
+});
+
 (async function init(){
   // Google SheetsのCSVデータを取得
   const sheetData = (SPREADSHEET_ID && !SPREADSHEET_ID.includes('<<')) ? 
