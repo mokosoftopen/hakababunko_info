@@ -445,6 +445,11 @@ function card(item){
       return { status: 'ended', label: '終了', mainDate: dateText, subDate: '' };
     }
 
+    // 終了日のみ設定されている場合（開始日がなく、終了日が未来）
+    if (!startDate && endDate && today <= endDate) {
+      return { status: 'current', label: '開催中', mainDate: `${formatDate(item.end_date)}まで`, subDate: '' };
+    }
+
     // 予定判定（開始前）
     if (startDate && today < startDate) {
       const mainDate = formatDate(item.start_date);
@@ -455,9 +460,9 @@ function card(item){
     // 開催中判定
     if (startDate && (!endDate || today <= endDate)) {
       if (endDate) {
-        return { status: 'current', label: '開催中', mainDate: `${formatDate(item.end_date)}まで`, subDate: `${formatDate(item.start_date)}〜` };
+        return { status: 'current', label: '開催中', mainDate: `${formatDate(item.end_date)}まで`, subDate: '' };
       } else {
-        return { status: 'current', label: '開催中', mainDate: `${formatDate(item.start_date)}〜`, subDate: '' };
+        return { status: 'current', label: '', mainDate: '開催中', subDate: '' };
       }
     }
 
