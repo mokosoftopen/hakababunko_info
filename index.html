@@ -315,8 +315,9 @@ URLクエリパラメータによる初期表示制御
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 <script>
 const UPDATED_FALLBACK = '2025-08-13'; // フォールバック用の更新日
-const SPREADSHEET_ID = '1oFtEcREkdS2MiUpZw0CmIioTZ0lUcXQ4PIEKOpetjs4';
-const SHEET_NAME = 'csv';
+// 掲載データはこのリポジトリ内の data.json。同じ場所から読むので確実で速い。
+// 更新は Claude Code に依頼する（手順は CLAUDE.md を参照）。
+const DATA_URL = './data.json';
 const FALLBACK = [
   {type:'goods', url:'https://x.com/Interior/status/1787945072538230788', status:'公開', thumbnail:'', title:'', media_type:'', date:'2025-08-01', start_date:'2025-08-01', end_date:'2025-09-30'},
   {type:'books', url:'https://x.com/Interior/status/1674889524172681217', status:'公開', thumbnail:'', title:'', media_type:'', date:'2025-07-15', start_date:'2025-09-01', end_date:'2025-10-14'},
@@ -389,20 +390,13 @@ for(const option of statusOptions){
   };
   statusControls.appendChild(b);
 }
-async function fetchGoogleSheet(spreadsheetId, sheetName){
+async function fetchData(url){
   try{
-    const url = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/export?format=csv&gid=0`;
     const res = await fetch(url, {cache:'no-store'});
-    if(!res.ok) throw new Error('Google Sheet fetch failed');
-    const text = await res.text();
-    const lines = text.trim().split(/\r?\n/);
-    const head = lines.shift().split(',').map(h => h.replace(/"/g, '').trim());
-    return lines.map(row=>{
-      const cols = row.split(',').map(col => col.replace(/"/g, '').trim());
-      const obj = {}; 
-      head.forEach((h,i)=> obj[h] = cols[i] || '');
-      return obj;
-    });
+    if(!res.ok) throw new Error(`データの取得に失敗しました (HTTP ${res.status})`);
+    const items = await res.json();
+    if(!Array.isArray(items)) throw new Error('データの形式が配列ではありません');
+    return items;
   }catch(e){
     console.warn(e); return null;
   }
@@ -1178,10 +1172,9 @@ nextMonthBtn.addEventListener('click', () => {
 });
 
 (async function init(){
-  // Google SheetsのCSVデータを取得
-  const sheetData = (SPREADSHEET_ID && !SPREADSHEET_ID.includes('<<')) ? 
-    await fetchGoogleSheet(SPREADSHEET_ID, SHEET_NAME) : null;
-  DATA = sheetData && Array.isArray(sheetData) ? sheetData : FALLBACK;
+  // 掲載データを読み込む。取得できなければ FALLBACK で最低限の表示を保つ
+  const loaded = await fetchData(DATA_URL);
+  DATA = (loaded && loaded.length > 0) ? loaded : FALLBACK;
   
   // データのdateフィールドから最新日付を取得して表示
   const dates = DATA

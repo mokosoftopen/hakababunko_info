@@ -42,14 +42,44 @@ This is a static HTML site with no build pipeline, package.json, or dependencies
 - No compilation or build steps required
 
 ### Content Management
-- Content is managed via Google Sheets (spreadsheet ID: `1oFtEcREkdS2MiUpZw0CmIioTZ0lUcXQ4PIEKOpetjs4`)
-- Fallback data is hardcoded in the `FALLBACK` array within `index.html:135-142`
-- Content fields: `type`, `url`, `status`, `thumbnail`, `title`, `media_type`, `date`, `start_date`, `end_date`
+- 掲載データは **`data.json`**（このリポジトリ内）。`index.html` が同じ場所から読み込む
+- 取得に失敗した場合のみ `index.html` 内の `FALLBACK` 配列が使われる
+- 項目: `url`, `status`, `type`, `thumbnail`, `media_type`, `date`, `start_date`, `end_date`, `title`
+- 旧データ源の Google スプレッドシート（`1oFtEcREkdS2MiUpZw0CmIioTZ0lUcXQ4PIEKOpetjs4`）は
+  2026-08-09 に `data.json` へ移行済み。参照はしていないが記録として残す
+
+### 掲載データの更新手順（Claude Code に依頼する）
+
+運用者が「ポータル更新して」と言ったら、以下を行う。常時動く自動化はしない。
+
+1. `data.json` を読み、登録済みの投稿 ID を把握する
+   （`url` の `status/<数字>` 部分が投稿 ID）
+2. @hakababunko の X タイムラインを取得する。**リポストも含める**
+   （他社の告知はリポスト経由で拾うため。リプライは除外）
+   - 転載ボット側の資格情報が `/Volumes/SSD2/github/hakababunko_mirror/.env` にある
+   - `GET /2/users/:id/tweets` に `expansions=referenced_tweets.id,referenced_tweets.id.author_id`
+     を付けると、リポスト元の本文と投稿者が取れる
+3. 未登録のものを拾い、次を判断する
+   - `type`: goods / books / events / web / news / sale のどれか
+   - `start_date` / `end_date`: 本文に明記があれば入れる。**分からなければ空**にする
+     （空の行は「開催中」として表示され続ける。誤った日付で早く消えるより安全）
+   - `thumbnail`: 投稿の画像 URL（動画は preview_image_url）
+   - `title`: 任意。分かりやすい見出しがあれば
+   - `status`: `公開`
+4. **追加する一覧を運用者に見せて確認を取る**。判断を含むので勝手に確定しない
+5. `data.json` に追記して commit・push する
+
+### 注意
+
+- `status` が `公開` 以外の行はサイトに表示されない。様子を見たい行に使える
+- 日付が両方空の行は常に「開催中」扱いになる。終了したら手で `end_date` を入れる
+- 同じ投稿 ID を二重に登録しない（`url` で照合する）
 
 ### Deployment
 - Hosted on GitHub Pages
 - Domain: configured via `CNAME` file
 - Auto-deploys from main branch
+- `data.json` を push すれば数分でサイトに反映される（ビルド不要）
 
 ## Key Configuration
 
