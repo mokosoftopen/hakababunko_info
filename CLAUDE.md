@@ -59,6 +59,11 @@ This is a static HTML site with no build pipeline, package.json, or dependencies
    - 転載ボット側の資格情報が `/Volumes/SSD2/github/hakababunko_mirror/.env` にある
    - `GET /2/users/:id/tweets` に `expansions=referenced_tweets.id,referenced_tweets.id.author_id`
      を付けると、リポスト元の本文と投稿者が取れる
+   - **必ず `since_id`（下記「前回の到達点」）を付ける。全期間の取り直しは禁止。**
+     X API の課金は「返ってきた投稿の件数」で決まる（自アカウントの読み取りは
+     $0.001/件、それ以外は $0.005/件。リクエスト回数では課金されない）。
+     expansions で返る引用元・リポスト元も1件として数えられる。
+     2026-08-11 に 8 か月ぶんを取り直して約 $1.3 を無駄にした。差分だけ取ること
 3. 未登録のものを拾い、次を判断する
    - `type`: goods / books / events / web / news / sale のどれか
    - `start_date` / `end_date`: 本文に明記があれば入れる。**分からなければ空**にする
@@ -68,6 +73,14 @@ This is a static HTML site with no build pipeline, package.json, or dependencies
    - `status`: `公開`
 4. **追加する一覧を運用者に見せて確認を取る**。判断を含むので勝手に確定しない
 5. `data.json` に追記して commit・push する
+
+### 前回の到達点（次回はここから差分を取る）
+
+```
+since_id  2086418400579137609   # 2026-08-09T11:44:45Z
+```
+
+更新するたびに、その回で取得した最新の投稿 ID をここに書き換えること。
 
 ### 注意
 
