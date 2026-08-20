@@ -153,73 +153,71 @@ URLクエリパラメータによる初期表示制御
   @media(max-width:480px){
     .calendar-btn{width:56px;height:56px;bottom:20px;right:20px;font-size:24px}
   }
-  .calendar-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);z-index:2000;display:none;align-items:center;justify-content:center;padding:20px}
+  .calendar-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(20,40,55,0.6);backdrop-filter:blur(6px);z-index:2000;display:none;align-items:center;justify-content:center;padding:20px}
   .calendar-modal.active{display:flex}
-  .calendar-container{background:var(--panel);border:2px solid #2f3336;border-radius:20px;max-width:1200px;width:100%;max-height:95vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.6)}
-  .calendar-header{display:flex;justify-content:space-between;align-items:center;padding:20px 70px 20px 24px;border-bottom:2px solid #2f3336;background:linear-gradient(135deg,rgba(29,155,240,0.1),rgba(29,155,240,0.05));position:relative}
-  .calendar-title{font-size:24px;font-weight:800;color:var(--ink)}
+  .calendar-container{background:#bcd7e6;border:none;border-radius:20px;max-width:1200px;width:100%;max-height:95vh;overflow-y:auto;scrollbar-gutter:stable;box-shadow:0 12px 40px rgba(0,30,50,0.35)}
+  .calendar-header{display:flex;justify-content:space-between;align-items:center;padding:20px 70px 20px 24px;background:transparent;position:relative}
+  .calendar-title{font-size:26px;font-weight:800;color:#4d6b7d;letter-spacing:0.04em}
   .calendar-nav{display:flex;gap:12px;flex-wrap:wrap}
-  .calendar-nav-btn{background:rgba(29,155,240,0.15);border:1px solid var(--accent);color:var(--accent);padding:8px 16px;border-radius:8px;cursor:pointer;font-weight:700;font-size:14px;transition:all 0.2s ease}
-  .calendar-nav-btn:hover{background:var(--accent);color:#00131f}
-  .calendar-close{position:absolute;top:20px;right:20px;background:rgba(255,255,255,0.1);border:1px solid #2f3336;color:var(--ink);width:40px;height:40px;border-radius:50%;cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;transition:all 0.2s ease}
-  .calendar-close:hover{background:rgba(255,0,0,0.2);border-color:#ef4444}
-  .calendar-body{padding:24px;position:relative}
-  .calendar-weekdays{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-bottom:12px}
-  .calendar-weekday{text-align:center;font-weight:700;font-size:13px;color:var(--muted);padding:8px}
+  .calendar-nav-btn{background:#fff;border:1px solid #8fb8cf;color:#2e7fae;padding:8px 16px;border-radius:999px;cursor:pointer;font-weight:700;font-size:14px;transition:all 0.2s ease;box-shadow:0 1px 3px rgba(0,30,50,0.15)}
+  .calendar-nav-btn:hover{background:#2e7fae;border-color:#2e7fae;color:#fff}
+  .calendar-close{position:absolute;top:20px;right:20px;background:#fff;border:1px solid #8fb8cf;color:#4d6b7d;width:40px;height:40px;border-radius:50%;cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;transition:all 0.2s ease;box-shadow:0 1px 3px rgba(0,30,50,0.15)}
+  .calendar-close:hover{background:#ffe8e8;border-color:#e05d5d;color:#e05d5d}
+  .calendar-body{padding:20px;margin:0 20px 20px;background:#fff;border-radius:14px;position:relative;box-shadow:0 2px 10px rgba(0,30,50,0.12)}
+  .calendar-weekdays{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:0;margin-bottom:10px;background:#1e1e1e;border-radius:8px;overflow:hidden}
+  .calendar-weekday{text-align:center;font-weight:800;font-size:15px;color:#fff;padding:10px 8px}
+  .calendar-weekday:first-child{color:#ff9d9d}
+  .calendar-weekday:last-child{color:#8fd0ff}
   .calendar-grid-wrapper{position:relative;min-height:400px}
-  .calendar-days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
-  .calendar-day{min-height:130px;border:1px solid #2f3336;border-radius:8px;padding:4px;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;background:rgba(255,255,255,0.03);cursor:pointer;transition:all 0.2s ease;position:relative;overflow:visible}
-  .calendar-day:hover{background:rgba(29,155,240,0.1);border-color:var(--accent)}
-  .calendar-day.other-month{opacity:0.3}
-  .calendar-day.today{border-color:var(--accent);border-width:2px;box-shadow:0 0 0 2px rgba(29,155,240,0.3)}
-  .calendar-day-number{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:2px;align-self:center}
-  .calendar-day-events{width:100%;display:flex;flex-direction:column;gap:2px;overflow-y:auto;flex:1;margin-top:20px}
-  .calendar-more-events{position:absolute;bottom:4px;left:50%;transform:translateX(-50%);background:rgba(29,155,240,0.9);color:#fff;padding:2px 8px;border-radius:10px;font-size:9px;font-weight:700;z-index:5;pointer-events:none}
-  .calendar-event-item{width:100%;padding:4px 6px;border-radius:6px;font-size:11px;font-weight:600;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:flex;align-items:center;gap:4px;cursor:pointer}
-  .calendar-event-item::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;flex-shrink:0}
-  .calendar-event-item.goods{background:rgba(245,158,11,0.2);color:#fbbf24;border:1px solid rgba(245,158,11,0.3)}
-  .calendar-event-item.goods::before{background:var(--goods)}
-  .calendar-event-item.books{background:rgba(96,165,250,0.2);color:#93c5fd;border:1px solid rgba(96,165,250,0.3)}
-  .calendar-event-item.books::before{background:var(--books)}
-  .calendar-event-item.events{background:rgba(34,197,94,0.2);color:#4ade80;border:1px solid rgba(34,197,94,0.3)}
-  .calendar-event-item.events::before{background:var(--events)}
-  .calendar-event-item.web{background:rgba(248,113,113,0.2);color:#fca5a5;border:1px solid rgba(248,113,113,0.3)}
-  .calendar-event-item.web::before{background:var(--web)}
-  .calendar-event-item.news{background:rgba(16,185,129,0.2);color:#34d399;border:1px solid rgba(16,185,129,0.3)}
-  .calendar-event-item.news::before{background:#10b981}
-  .calendar-event-item.sale{background:rgba(245,158,11,0.2);color:#fbbf24;border:1px solid rgba(245,158,11,0.3)}
-  .calendar-event-item.sale::before{background:#f59e0b}
+  .calendar-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+  .calendar-day{min-height:160px;border:1px solid #dce8ef;border-radius:8px;padding:4px;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;background:#fff;cursor:pointer;transition:all 0.2s ease;position:relative;overflow:visible}
+  .calendar-day:hover{background:#eaf5fb;border-color:#7fb8d8}
+  .calendar-day.other-month{opacity:0.35;background:#f4f8fa}
+  .calendar-day.today{border-color:#f5a623;border-width:2px;background:#fff8e8;box-shadow:0 0 0 2px rgba(245,166,35,0.25)}
+  .calendar-day:nth-child(7n+1) .calendar-day-number{color:#e05d5d}
+  .calendar-day:nth-child(7n) .calendar-day-number{color:#3a8fd0}
+  .calendar-day-number{font-size:18px;font-weight:700;color:#333;margin-bottom:2px;align-self:center}
+  .calendar-day-events{width:100%;display:flex;flex-direction:column;gap:2px;overflow-y:auto;flex:1;margin-top:24px;padding-bottom:20px}
+  .calendar-more-events{position:absolute;bottom:4px;left:50%;transform:translateX(-50%);background:#2e7fae;color:#fff;padding:2px 8px;border-radius:10px;font-size:9px;font-weight:700;z-index:5;pointer-events:none}
+  .calendar-event-item{width:100%;padding:4px 6px;border-radius:5px;font-size:11px;font-weight:700;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:flex;align-items:center;gap:4px;cursor:pointer;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,0.35)}
+  .calendar-event-item::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;flex-shrink:0;background:rgba(255,255,255,0.85)}
+  .calendar-event-item.goods{background:#f59e0b}
+  .calendar-event-item.books{background:#3b82f6}
+  .calendar-event-item.events{background:#16a34a}
+  .calendar-event-item.web{background:#ef4444}
+  .calendar-event-item.news{background:#0d9488}
+  .calendar-event-item.sale{background:#e8720c}
   .calendar-events-layer{position:absolute;top:0;left:0;right:0;pointer-events:none;z-index:10}
-  .calendar-event-bar{position:absolute;height:17px;padding:1px 6px;border-radius:5px;font-size:9px;font-weight:700;line-height:1.5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;pointer-events:auto;transition:all 0.2s ease;border:1px solid;box-shadow:0 1px 2px rgba(0,0,0,0.3)}
-  .calendar-event-bar:hover{transform:translateY(-1px);box-shadow:0 3px 8px rgba(0,0,0,0.6);z-index:100;filter:brightness(1.1)}
+  .calendar-event-bar{position:absolute;box-sizing:border-box;height:18px;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;pointer-events:auto;transition:all 0.2s ease;border:none;box-shadow:0 1px 3px rgba(0,30,50,0.25);color:#fff;text-shadow:0 1px 2px rgba(0,0,0,0.35)}
+  .calendar-event-bar:hover{transform:translateY(-1px);box-shadow:0 3px 10px rgba(0,30,50,0.4);z-index:100;filter:brightness(1.08)}
   .calendar-event-bar.hidden{display:none}
   .day-events-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);backdrop-filter:blur(8px);z-index:3000;display:none;align-items:center;justify-content:center;padding:20px}
   .day-events-modal.active{display:flex}
-  .day-events-container{background:var(--panel);border:2px solid #2f3336;border-radius:16px;max-width:600px;width:100%;max-height:80vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.6)}
-  .day-events-header{display:flex;justify-content:space-between;align-items:center;padding:20px 60px 20px 20px;border-bottom:2px solid #2f3336;background:linear-gradient(135deg,rgba(29,155,240,0.1),rgba(29,155,240,0.05));position:relative}
-  .day-events-title{font-size:20px;font-weight:800;color:var(--ink)}
-  .day-events-close{position:absolute;top:16px;right:16px;background:rgba(255,255,255,0.1);border:1px solid #2f3336;color:var(--ink);width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:all 0.2s ease}
-  .day-events-close:hover{background:rgba(255,0,0,0.2);border-color:#ef4444}
+  .day-events-container{background:#fff;border:none;border-radius:16px;max-width:600px;width:100%;max-height:80vh;overflow-y:auto;box-shadow:0 12px 40px rgba(0,30,50,0.35)}
+  .day-events-header{display:flex;justify-content:space-between;align-items:center;padding:20px 60px 20px 20px;border-bottom:1px solid #dce8ef;background:#e6f2f9;position:relative}
+  .day-events-title{font-size:20px;font-weight:800;color:#2c4a5a}
+  .day-events-close{position:absolute;top:16px;right:16px;background:#fff;border:1px solid #b8d2e0;color:#4d6b7d;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:all 0.2s ease}
+  .day-events-close:hover{background:#ffe8e8;border-color:#e05d5d;color:#e05d5d}
   .day-events-list{padding:16px}
-  .day-event-card{background:rgba(255,255,255,0.05);border:1px solid #2f3336;border-radius:12px;padding:16px;margin-bottom:12px;cursor:pointer;transition:all 0.2s ease}
-  .day-event-card:hover{background:rgba(29,155,240,0.1);border-color:var(--accent);transform:translateX(4px)}
+  .day-event-card{background:#f6fafc;border:1px solid #dce8ef;border-radius:12px;padding:16px;margin-bottom:12px;cursor:pointer;transition:all 0.2s ease}
+  .day-event-card:hover{background:#eaf5fb;border-color:#7fb8d8;transform:translateX(4px)}
   .day-event-card:last-child{margin-bottom:0}
   .day-event-type{font-size:12px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px}
   .day-event-type::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%}
-  .day-event-type.goods{color:var(--goods)}
-  .day-event-type.goods::before{background:var(--goods)}
-  .day-event-type.books{color:var(--books)}
-  .day-event-type.books::before{background:var(--books)}
-  .day-event-type.events{color:var(--events)}
-  .day-event-type.events::before{background:var(--events)}
-  .day-event-type.web{color:var(--web)}
-  .day-event-type.web::before{background:var(--web)}
-  .day-event-type.news{color:#10b981}
-  .day-event-type.news::before{background:#10b981}
-  .day-event-type.sale{color:#f59e0b}
-  .day-event-type.sale::before{background:#f59e0b}
-  .day-event-content{font-size:14px;color:var(--ink);line-height:1.5}
-  .day-event-period{font-size:12px;color:var(--muted);margin-top:8px}
+  .day-event-type.goods{color:#d97706}
+  .day-event-type.goods::before{background:#d97706}
+  .day-event-type.books{color:#2563eb}
+  .day-event-type.books::before{background:#2563eb}
+  .day-event-type.events{color:#16a34a}
+  .day-event-type.events::before{background:#16a34a}
+  .day-event-type.web{color:#dc2626}
+  .day-event-type.web::before{background:#dc2626}
+  .day-event-type.news{color:#0d9488}
+  .day-event-type.news::before{background:#0d9488}
+  .day-event-type.sale{color:#ea580c}
+  .day-event-type.sale::before{background:#ea580c}
+  .day-event-content{font-size:14px;color:#333;line-height:1.5}
+  .day-event-period{font-size:12px;color:#7a8b96;margin-top:8px}
   @media(max-width:768px){
     .calendar-container{max-width:100%;border-radius:16px}
     .calendar-header{padding:16px 60px 16px 16px;flex-direction:column;align-items:flex-start;gap:12px}
@@ -227,11 +225,12 @@ URLクエリパラメータによる初期表示制御
     .calendar-nav{gap:8px}
     .calendar-nav-btn{padding:6px 12px;font-size:13px}
     .calendar-close{top:16px;right:16px;width:36px;height:36px;font-size:18px}
-    .calendar-body{padding:16px}
-    .calendar-day{padding:4px;min-height:100px}
-    .calendar-day-number{font-size:11px;margin-bottom:2px}
+    .calendar-body{padding:12px;margin:0 12px 16px}
+    .calendar-weekday{font-size:12px;padding:8px 4px}
+    .calendar-day{padding:4px;min-height:150px}
+    .calendar-day-number{font-size:15px;margin-bottom:2px}
     .calendar-event-item{font-size:9px;padding:2px 4px}
-    .calendar-event-bar{height:15px;font-size:8px;padding:1px 4px}
+    .calendar-event-bar{height:16px;font-size:9px;padding:1px 5px}
     .calendar-more-events{font-size:8px;padding:1px 6px}
     .day-events-container{max-width:100%;border-radius:12px}
     .day-events-header{padding:16px 50px 16px 16px}
@@ -650,22 +649,20 @@ function render(){
 // カレンダー機能
 let currentCalendarDate = new Date();
 
-// カレンダー用の色パレット（カテゴリ色 + 追加の補助色）
+// カレンダー用の色パレット（白背景で映える不透明色。文字は白で統一）
 const CALENDAR_COLORS = [
-  // カテゴリ色（最初の6色）
-  {bg: 'rgba(245,158,11,0.95)', border: '#f59e0b', text: '#000'}, // goods/sale (amber)
-  {bg: 'rgba(96,165,250,0.95)', border: '#60a5fa', text: '#000'}, // books (blue)
-  {bg: 'rgba(34,197,94,0.95)', border: '#22c55e', text: '#000'}, // events (green)
-  {bg: 'rgba(248,113,113,0.95)', border: '#f87171', text: '#000'}, // web (red)
-  {bg: 'rgba(16,185,129,0.95)', border: '#10b981', text: '#000'}, // news (teal)
-  {bg: 'rgba(168,85,247,0.95)', border: '#a855f7', text: '#000'}, // purple
-  // 追加の補助色（重なり用）
-  {bg: 'rgba(236,72,153,0.95)', border: '#ec4899', text: '#000'}, // pink
-  {bg: 'rgba(251,146,60,0.95)', border: '#fb923c', text: '#000'}, // orange
-  {bg: 'rgba(132,204,22,0.95)', border: '#84cc16', text: '#000'}, // lime
-  {bg: 'rgba(6,182,212,0.95)', border: '#06b6d4', text: '#000'}, // cyan
-  {bg: 'rgba(99,102,241,0.95)', border: '#6366f1', text: '#fff'}, // indigo
-  {bg: 'rgba(244,63,94,0.95)', border: '#f43f5e', text: '#000'}, // rose
+  {bg: '#f7941d', text: '#fff'}, // オレンジ
+  {bg: '#29abe2', text: '#fff'}, // シアン
+  {bg: '#5fa834', text: '#fff'}, // 黄緑
+  {bg: '#f0669b', text: '#fff'}, // ピンク
+  {bg: '#3fa796', text: '#fff'}, // ティール
+  {bg: '#8168c8', text: '#fff'}, // パープル
+  {bg: '#e05d5d', text: '#fff'}, // レッド
+  {bg: '#b5952f', text: '#fff'}, // ゴールド
+  {bg: '#4a7fd4', text: '#fff'}, // ブルー
+  {bg: '#e8720c', text: '#fff'}, // ダークオレンジ
+  {bg: '#6366f1', text: '#fff'}, // インディゴ
+  {bg: '#c94ab4', text: '#fff'}, // マゼンタ
 ];
 
 function renderCalendar(year, month) {
@@ -915,6 +912,26 @@ function renderCalendar(year, month) {
     const MAX_VISIBLE_LANES = 5; // 1つのセルに表示する最大レーン数
     const cellMaxLanes = {}; // 各セルの最大レーン数を記録
 
+    // 先に各セルの最大レーン数を求め、単日チップをバーの下へ押し下げる
+    // （バーの位置計測より前に行わないと、押し下げによる再レイアウトで縦位置がズレる）
+    Object.keys(eventsByRow).forEach(rowKey => {
+      eventsByRow[rowKey].forEach(segment => {
+        for (let i = segment.start; i <= segment.end; i++) {
+          if (!cellMaxLanes[i]) cellMaxLanes[i] = 0;
+          cellMaxLanes[i] = Math.max(cellMaxLanes[i], segment.lane);
+        }
+      });
+    });
+    Object.keys(cellMaxLanes).forEach(cellIndex => {
+      const cell = calendarDays.children[cellIndex];
+      if (!cell) return;
+      const visibleLanes = Math.min(cellMaxLanes[cellIndex] + 1, MAX_VISIBLE_LANES);
+      const eventsContainer = cell.querySelector('.calendar-day-events');
+      if (eventsContainer) {
+        eventsContainer.style.marginTop = `${visibleLanes * 20 + 4}px`;
+      }
+    });
+
     // イベントバーを描画
     const allBars = [];
     Object.keys(eventsByRow).forEach(rowKey => {
@@ -923,12 +940,6 @@ function renderCalendar(year, month) {
       row.forEach(segment => {
         const {event, start, end, length, lane} = segment;
         const color = CALENDAR_COLORS[eventColors.get(event)];
-
-        // このセグメントが占めるセルの最大レーンを更新
-        for (let i = start; i <= end; i++) {
-          if (!cellMaxLanes[i]) cellMaxLanes[i] = 0;
-          cellMaxLanes[i] = Math.max(cellMaxLanes[i], lane);
-        }
 
         // セルの位置を取得
         const startCell = calendarDays.children[start];
@@ -950,8 +961,7 @@ function renderCalendar(year, month) {
         }
 
         // カスタム色を適用
-        eventBar.style.background = `linear-gradient(135deg, ${color.bg}, ${color.bg.replace('0.95', '0.85')})`;
-        eventBar.style.borderColor = color.border;
+        eventBar.style.background = color.bg;
         eventBar.style.color = color.text;
 
         // 本文を取得
@@ -980,14 +990,14 @@ function renderCalendar(year, month) {
           }
         });
 
-        // 位置とサイズを計算
-        const cellWidth = rect.width;
-        const cellGap = 6;
-        const barHeight = 17;
-        const barGap = 1;
-        const top = rect.top - parentRect.top + 24 + (lane * (barHeight + barGap));
+        // 位置とサイズを計算（終端セルの実座標から幅を出す）
+        const endCell = calendarDays.children[end];
+        const endRect = endCell ? endCell.getBoundingClientRect() : rect;
+        const barHeight = 18;
+        const barGap = 2;
+        const top = rect.top - parentRect.top + 28 + (lane * (barHeight + barGap));
         const left = rect.left - parentRect.left;
-        const width = (cellWidth * length) + (cellGap * (length - 1));
+        const width = endRect.right - rect.left;
 
         eventBar.style.top = `${top}px`;
         eventBar.style.left = `${left}px`;
@@ -1141,23 +1151,27 @@ const nextMonthBtn = document.getElementById('nextMonth');
 
 calendarBtn.addEventListener('click', () => {
   calendarModal.classList.add('active');
+  // 背面ページのスクロールバー出現/消滅でモーダル幅が変わりバー位置がズレるのを防ぐ
+  document.body.style.overflow = 'hidden';
   currentCalendarDate = new Date();
   renderCalendar(currentCalendarDate.getFullYear(), currentCalendarDate.getMonth());
 });
 
 calendarClose.addEventListener('click', () => {
   calendarModal.classList.remove('active');
+  document.body.style.overflow = '';
 });
 
 calendarModal.addEventListener('click', (e) => {
   if (e.target === calendarModal) {
     calendarModal.classList.remove('active');
+    document.body.style.overflow = '';
   }
 });
 
-// 月切り替え
+// 月切り替え（31日など月末に押すと日付の正規化で月が飛ぶため、日を1日に固定して移動する）
 prevMonthBtn.addEventListener('click', () => {
-  currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1);
+  currentCalendarDate = new Date(currentCalendarDate.getFullYear(), currentCalendarDate.getMonth() - 1, 1);
   renderCalendar(currentCalendarDate.getFullYear(), currentCalendarDate.getMonth());
 });
 
@@ -1167,7 +1181,7 @@ currentMonthBtn.addEventListener('click', () => {
 });
 
 nextMonthBtn.addEventListener('click', () => {
-  currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1);
+  currentCalendarDate = new Date(currentCalendarDate.getFullYear(), currentCalendarDate.getMonth() + 1, 1);
   renderCalendar(currentCalendarDate.getFullYear(), currentCalendarDate.getMonth());
 });
 
