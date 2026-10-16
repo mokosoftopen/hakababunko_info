@@ -106,6 +106,19 @@
   .types label{display:flex;align-items:center;gap:8px;min-height:40px;padding:0 10px;border-radius:10px;background:#fff;font-size:14px;cursor:pointer}
   .types input{width:18px;height:18px;margin:0;accent-color:var(--accent)}
   .types .dot{flex:none;width:10px;height:10px;border-radius:50%;background:var(--c)}
+  .list-tools{display:flex;flex-direction:column;gap:8px;margin:0 0 12px}
+  .search{position:relative}
+  .search::before{content:"";position:absolute;left:14px;top:50%;width:11px;height:11px;margin-top:-8px;border:2px solid #8aa9bb;border-radius:50%;pointer-events:none}
+  .search::after{content:"";position:absolute;left:26px;top:50%;width:2px;height:7px;margin-top:2px;border-radius:1px;background:#8aa9bb;transform:rotate(-45deg);pointer-events:none}
+  .search .text{padding-left:40px;-webkit-appearance:none;appearance:none}
+  .tools-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 12px}
+  .sort{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--ink2)}
+  .select-wrap{position:relative;display:inline-block}
+  .select-wrap::after{content:"";position:absolute;right:13px;top:50%;width:6px;height:6px;margin-top:-5px;border-right:2px solid var(--ink2);border-bottom:2px solid var(--ink2);transform:rotate(45deg);pointer-events:none}
+  .sort select{height:38px;padding:0 32px 0 12px;border:1px solid #d9e6ee;border-radius:10px;background:#fff;color:var(--ink);font:inherit;font-size:14px;-webkit-appearance:none;appearance:none;cursor:pointer}
+  .sort select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(46,127,174,.18)}
+  .only{display:inline-flex;align-items:center;gap:8px;min-height:38px;font-size:13px;color:var(--ink);cursor:pointer}
+  .only input{width:18px;height:18px;margin:0;accent-color:var(--accent)}
   .count{margin:0 0 10px;font-size:14px;color:var(--ink2)}
   .warn{margin:0 0 12px;padding:10px 14px;border-radius:12px;background:var(--today-bg);font-size:13px;line-height:1.7}
   .warn[hidden]{display:none}
@@ -155,6 +168,7 @@
     .text{height:46px;font-size:16px}
     .period .text{-webkit-appearance:none;appearance:none}
     .cands{max-height:60vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+    .sort select{height:44px;font-size:16px}
     .cand .text.cand-label{font-size:16px}
     .btn.make{width:100%;min-width:0}
     .actions{max-width:none}
@@ -358,6 +372,24 @@
           <div class="types" id="typeFilter"></div>
         </div>
       </details>
+      <!-- 検索・並び替えは再描画される一覧（#cands）の外に置き、入力中にフォーカスや変換が切れないようにする -->
+      <div class="list-tools">
+        <div class="search">
+          <input type="search" class="text" id="candSearch" placeholder="キーワードでさがす（例：マリン）" aria-label="キーワードでさがす" autocomplete="off" enterkeyhint="search">
+        </div>
+        <div class="tools-row">
+          <label class="sort">ならび順
+            <span class="select-wrap">
+              <select id="candSort">
+                <option value="new" selected>新しい順</option>
+                <option value="old">古い順</option>
+                <option value="soon">開催日が近い順</option>
+              </select>
+            </span>
+          </label>
+          <label class="only"><input type="checkbox" id="candOnly">えらんだ予定だけ表示する</label>
+        </div>
+      </div>
       <p class="count" id="candCount"></p>
       <div class="warn" id="warn" hidden></div>
       <div class="cands" id="cands"><p class="empty-note">予定を読み込んでいます…</p></div>
@@ -449,21 +481,63 @@ function isDefaultSelected(row, today, from, to) {
   return dayNum(s) >= dayNum(from) && dayNum(s) <= dayNum(to);
 }
 
-// 候補一覧: 公開・種別が一致・期間に重なる行を、start_date 昇順（なければ end_date）で並べる
+// 開催日の並び: start_date 昇順（なければ end_date）。同じなら終わる日、投稿日時の順
+function eventKey(row) {
+  const d = parseYMD(row.start_date) || parseYMD(row.end_date);
+  return d ? dayNum(d) : Infinity;
+}
+
+function compareByEvent(a, b) {
+  return (eventKey(a.row) - eventKey(b.row)) ||
+    (dayNum(a.range.end) - dayNum(b.range.end)) ||
+    String(a.row.date || '').localeCompare(String(b.row.date || ''));
+}
+
+// 候補一覧: 公開・種別が一致・期間に重なる行を、開催日の順で並べる（画像の中の並びもこの順）
 function buildCandidates(data, opts) {
   const types = opts.types instanceof Set ? opts.types : new Set(opts.types);
-  const sortKey = r => {
-    const d = parseYMD(r.start_date) || parseYMD(r.end_date);
-    return d ? dayNum(d) : Infinity;
-  };
   return data
     .filter(r => r.status === '公開' && types.has(r.type))
     .map(r => ({row: r, range: rowRange(r)}))
     .filter(c => overlapsPeriod(c.range, opts.from, opts.to))
-    .sort((a, b) =>
-      (sortKey(a.row) - sortKey(b.row)) ||
-      (dayNum(a.range.end) - dayNum(b.range.end)) ||
-      String(a.row.date || '').localeCompare(String(b.row.date || '')));
+    .sort(compareByEvent);
+}
+
+// 告知の投稿日時 "2026/1/16 12:04" "2026/01/14 12:15:16" "2026-01-22" を並べ替え用の数値にする（split で読む。読めなければ null）
+function postedAt(s) {
+  if (!s) return null;
+  const [datePart, timePart = ''] = String(s).trim().split(/\s+/);
+  const d = datePart.split(/[\/-]/).map(Number);
+  if (d.length < 3 || d.some(n => !Number.isFinite(n))) return null;
+  const t = timePart.split(':').map(n => (Number.isFinite(Number(n)) ? Number(n) : 0));
+  return Date.UTC(d[0], d[1] - 1, d[2], t[0] || 0, t[1] || 0, t[2] || 0);
+}
+
+// 候補一覧の表示の並べ替え（new: 新しい順 / old: 古い順 / soon: 開催日が近い順）。元の配列は変えない
+// 投稿日時が同じなら開催日の順。投稿日時が読めない行は、どちらの向きでも最後
+function sortCands(list, mode) {
+  const arr = list.slice();
+  if (mode === 'soon') return arr.sort(compareByEvent);
+  const dir = mode === 'old' ? 1 : -1;
+  return arr.sort((a, b) => {
+    const x = postedAt(a.row.date);
+    const y = postedAt(b.row.date);
+    if (x == null || y == null) return (x == null) - (y == null);
+    return (x - y) * dir || compareByEvent(a, b);
+  });
+}
+
+// 検索用に文字をそろえる（全角半角の英数字・大文字小文字の違いをなくす）
+function normalizeText(s) {
+  return String(s == null ? '' : s).normalize('NFKC').toLowerCase();
+}
+
+// キーワードに部分一致するか。空白で区切ったときは、すべてのことばを含むものだけ
+function matchesQuery(text, query) {
+  const terms = normalizeText(query).split(/\s+/).filter(Boolean);
+  if (!terms.length) return true;
+  const t = normalizeText(text);
+  return terms.every(w => t.includes(w));
 }
 
 function authorFromUrl(url) {
@@ -751,7 +825,13 @@ function isWebKitUA(ua) {
     types: new Set(TYPE_ORDER),
     checked: new Map(),   // 手で触った行だけ（key → bool）。触っていない行は初期選択の規則に従う
     labels: new Map(),    // 編集したラベル（key → 文字列）。保存はしない
-    cands: [],
+    cands: [],            // 候補（開催日の順。画像の中の並びにも使う）
+    // 候補一覧の表示だけを変える設定（チェック状態・画像の中身には影響しない）
+    sort: 'new',          // new: 新しい順 / old: 古い順 / soon: 開催日が近い順
+    query: '',            // キーワード
+    onlyChecked: false,   // えらんだ予定だけ表示する
+    visibleCount: 0,      // いま一覧に出ている行数
+    shownKeys: new Set(), // 直近の画像に入っている行（「今回の画像にはのりません」の判定用）
     calYear: today.getFullYear(),
     calMonth: today.getMonth(),
     tileItems: [],
@@ -804,27 +884,57 @@ function isWebKitUA(ua) {
     $('filterNow').textContent = `いま：${yr}${md(p.from)}〜${yrTo}${md(p.to)}・${types}`;
   }
 
+  // 期間・種類が変わったときに候補を作り直す
   function renderCandidates() {
     const p = period();
     state.cands = buildCandidates(state.data, {from: p.from, to: p.to, types: state.types});
-    const refYear = p.from.getFullYear();
     renderFilterNow();
+    renderCandList();
+  }
+
+  function isFiltering() {
+    return state.onlyChecked || normalizeText(state.query).trim() !== '';
+  }
+
+  // 一覧の見出しの件数（絞り込み中は表示中の件数も出す）
+  function updateCount() {
+    const picked = state.cands.filter(c => isChecked(c.row)).length;
+    const shown = isFiltering() ? `・表示中 ${state.visibleCount} 件` : '';
+    $('candCount').textContent = `えらんだ予定：${picked} 件（候補は ${state.cands.length} 件${shown}）`;
+  }
+
+  // 候補一覧を描く。並び替え・キーワード・「えらんだ予定だけ」は表示だけに効かせ、行の data-i は state.cands の添字のまま
+  function renderCandList() {
+    const refYear = period().from.getFullYear();
+    const vis = state.cands.length ? sortCands(state.cands.map((c, i) => ({row: c.row, range: c.range, i})), state.sort)
+      // 元のタイトルか、編集モードで書きかえたラベルのどちらかに当たれば出す（書きかえ中に行が消えないよう元のタイトルも見る）
+      .filter(v => (!state.onlyChecked || isChecked(v.row))
+        && (matchesQuery(defaultLabel(v.row), state.query) || (EDIT && matchesQuery(labelOf(v.row), state.query)))) : [];
+    state.visibleCount = vis.length;
+    updateCount();
     if (!state.cands.length) {
       candsEl.innerHTML = '<p class="empty-note">この期間・種類にあてはまる予定はありません。「期間や種類をしぼる」で変えてみてください。</p>';
       return;
     }
-    candsEl.innerHTML = state.cands.map((c, i) => {
-      const r = c.row;
+    if (!vis.length) {
+      candsEl.innerHTML = normalizeText(state.query).trim()
+        ? '<p class="empty-note">見つかりませんでした。ことばを変えてみてください。</p>'
+        : '<p class="empty-note">えらんだ予定はまだありません。「えらんだ予定だけ表示する」を外すと、すべての候補が出ます。</p>';
+      return;
+    }
+    candsEl.innerHTML = vis.map(v => {
+      const r = v.row;
       const thumb = normalizeThumb(r.thumbnail, 'small');
       const thumbHtml = thumb && !failedThumbs.has(thumb)
         ? `<img class="cand-thumb" loading="lazy" crossorigin="anonymous" src="${esc(thumb)}" alt="">`
         : `<span class="cand-thumb noimg">${esc(typeLabel(r.type))}</span>`;
-      return `<div class="cand ty-${esc(r.type)}${isChecked(r) ? ' on' : ''}" data-i="${i}">
+      const on = isChecked(r);
+      return `<div class="cand ty-${esc(r.type)}${on ? ' on' : ''}${on && !state.shownKeys.has(keyOf(r)) ? ' off' : ''}" data-i="${v.i}">
         <label class="cand-pick">
-          <input type="checkbox"${isChecked(r) ? ' checked' : ''}>
+          <input type="checkbox"${on ? ' checked' : ''}>
           ${thumbHtml}
           <span class="cand-meta">
-            <span class="cand-date">${esc(formatRange(c.range, refYear))}</span>
+            <span class="cand-date">${esc(formatRange(v.range, refYear))}</span>
             <span class="chip sm">${esc(typeLabel(r.type))}</span>
             <span class="cand-off">今回の画像にはのりません</span>
             ${EDIT ? '' : `<span class="cand-title">${esc(labelOf(r))}</span>`}
@@ -902,7 +1012,7 @@ function isWebKitUA(ua) {
   function renderList(items, warns, shown) {
     const list = items.slice(0, LIST_MAX);
     if (items.length > LIST_MAX) {
-      warns.push(`リストにのせられるのは ${LIST_MAX} 件までです。上から ${LIST_MAX} 件をのせています。`);
+      warns.push(`リストにのせられるのは ${LIST_MAX} 件までです。開催日の早い順に ${LIST_MAX} 件をのせています。`);
     }
     list.forEach(it => shown.add(it.key));
     if (!list.length) return '<div class="s-empty">予定がまだ選ばれていません</div>';
@@ -992,7 +1102,7 @@ function isWebKitUA(ua) {
   function renderTile(items, warns, shown) {
     const list = items.slice(0, TILE_MAX);
     if (items.length > TILE_MAX) {
-      warns.push(`画像タイルにのせられるのは ${TILE_MAX} 件までです。上から ${TILE_MAX} 件をのせています。`);
+      warns.push(`画像タイルにのせられるのは ${TILE_MAX} 件までです。開催日の早い順に ${TILE_MAX} 件をのせています。`);
     } else if (items.length && items.length < TILE_MIN) {
       warns.push(`画像タイルは ${TILE_MIN}〜${TILE_MAX} 件えらぶと、きれいに並びます（いまは ${items.length} 件）。`);
     }
@@ -1079,7 +1189,8 @@ function isWebKitUA(ua) {
     sweepBrokenImages();
     renderWarnings(warns);
 
-    // 候補一覧の「選択中だが画像に入っていない」印と件数
+    // 候補一覧の「選択中だが画像に入っていない」印と件数（一覧は描き直さない。チェックを外した行も次に描き直すまで残す）
+    state.shownKeys = shown;
     candsEl.querySelectorAll('.cand').forEach(el => {
       const c = state.cands[Number(el.dataset.i)];
       if (!c) return;
@@ -1087,7 +1198,7 @@ function isWebKitUA(ua) {
       el.classList.toggle('on', isChecked(c.row));
       el.classList.toggle('off', isChecked(c.row) && !shown.has(k));
     });
-    $('candCount').textContent = `えらんだ予定：${items.length} 件（候補は ${state.cands.length} 件）`;
+    updateCount();
     $('monthLabel').textContent = `${state.calYear}年${state.calMonth + 1}月`;
   }
 
@@ -1173,6 +1284,52 @@ function isWebKitUA(ua) {
     syncCalMonth();
     renderCandidates();
     renderStage();
+  });
+
+  // ----- 候補一覧の検索・並び替え・「えらんだ予定だけ」（表示だけを変える） -----
+  const searchEl = $('candSearch');
+  const sortEl = $('candSort');
+  const onlyEl = $('candOnly');
+  // ブラウザが再読み込みで入力欄の値を復元することがあるので、画面の値を state の初期値にする
+  state.sort = ['new', 'old', 'soon'].includes(sortEl.value) ? sortEl.value : 'new';
+  state.onlyChecked = !!onlyEl.checked;
+  state.query = searchEl.value || '';
+  function refreshList() {
+    renderCandList();
+    candsEl.scrollTop = 0;
+  }
+  sortEl.addEventListener('change', () => {
+    state.sort = sortEl.value;
+    refreshList();
+  });
+  onlyEl.addEventListener('change', () => {
+    state.onlyChecked = onlyEl.checked;
+    refreshList();
+  });
+  // 日本語の変換中（compositionstart〜end）は絞り込みを保留し、確定してから反映する
+  let composing = false;
+  function applyQuery() {
+    if (state.query === searchEl.value) return;
+    state.query = searchEl.value;
+    refreshList();
+  }
+  searchEl.addEventListener('compositionstart', () => { composing = true; });
+  searchEl.addEventListener('compositionend', () => {
+    composing = false;
+    applyQuery();
+  });
+  searchEl.addEventListener('input', e => {
+    if (composing || e.isComposing) return;
+    applyQuery();
+  });
+  // 変換の終わりの通知が来ないままフォーカスが外れても、検索が止まったままにならないようにする
+  searchEl.addEventListener('blur', () => {
+    composing = false;
+    applyQuery();
+  });
+  // Enter で何かを送信することはしない（変換の確定の Enter は邪魔しない）
+  searchEl.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !(e.isComposing || composing || e.keyCode === 229)) e.preventDefault();
   });
 
   $('typeFilter').innerHTML = TYPE_ORDER.map(t =>
