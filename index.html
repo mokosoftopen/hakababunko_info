@@ -51,13 +51,23 @@ URLクエリパラメータによる初期表示制御
   }
   html,body{background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP","Segoe UI",Roboto,Helvetica,Arial,"Yu Gothic",Meiryo,sans-serif;}
   a{color:var(--accent);}
-  .wrap{max-width:960px;margin:0 auto;padding:18px 16px 40px;}
+  .wrap{max-width:960px;margin:0 auto;padding:18px 16px 120px;}
   header{display:flex;gap:12px;align-items:center;margin-bottom:8px}
   .logo{width:52px;height:52px;border-radius:12px;background:#0a0a0a;object-fit:cover;border:2px solid #2f3336}
   h1{font-size:clamp(20px,4.6vw,34px);margin:0}
   .updated{color:var(--muted);font-size:13px;margin-top:2px}
-  .share-entry{display:inline-flex;align-items:center;margin-top:6px;padding:6px 14px;border:1px solid #2f3336;border-radius:999px;background:#0f1419;color:var(--accent);font-size:13px;font-weight:700;text-decoration:none;transition:background 0.2s ease,border-color 0.2s ease}
-  .share-entry:hover{background:#1a1d23;border-color:#3f4246}
+  .site-desc{color:#b4bcc4;font-size:14px;line-height:1.6;margin:0 0 20px}
+  .tabs{display:flex;gap:0;border-bottom:1px solid #2f3336;margin:0 0 16px}
+  .tab{flex:1;background:none;border:none;border-bottom:3px solid transparent;margin-bottom:-1px;color:var(--muted);font-family:inherit;font-size:17px;font-weight:800;padding:12px 4px;min-height:48px;white-space:nowrap;cursor:pointer;transition:color 0.2s ease,border-color 0.2s ease}
+  .tab:hover{color:var(--ink)}
+  .tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+  .tab-count{font-size:12px;font-weight:700;color:var(--muted);margin-left:4px}
+  .tab[aria-selected="true"] .tab-count{color:var(--accent)}
+  .cat-row{display:flex;gap:8px;overflow-x:auto;margin:0 0 12px;padding-bottom:4px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .cat-row::-webkit-scrollbar{display:none}
+  .cat-row .chip{flex:0 0 auto;font-size:13px;font-weight:600;padding:6px 14px;min-height:36px;background:none}
+  .cat-row .chip[data-active="true"]{background:var(--accent);box-shadow:none}
+  .sort-select{background:#0f1419;color:var(--muted);border:1px solid #2f3336;border-radius:8px;font-family:inherit;font-size:13px;font-weight:600;padding:6px 8px;min-height:36px}
   .controls{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 12px;align-items:center}
   .control-label{color:var(--muted);font-size:14px;font-weight:600;margin-right:4px;width:100%;margin-bottom:6px}
   .chip{border:1px solid #2f3336;background:#0f1419;color:#cfd3d7;padding:10px 14px;border-radius:999px;cursor:pointer;font-weight:700;font-size:14px;min-height:44px;display:flex;align-items:center;justify-content:center;transition:all 0.2s ease}
@@ -120,7 +130,8 @@ URLクエリパラメータによる初期表示制御
     .date-info-main{font-size:16px}
     .date-info-sub{font-size:10px}
     .grid{gap:16px}
-    .wrap{padding:12px 12px 30px}
+    .wrap{padding:12px 12px 110px}
+    .tab{font-size:15px}
   }
   .card .twitter-tweet{width:100% !important;max-width:none !important;max-height:280px !important;overflow:hidden !important}
   .kicker{font-size:12px;color:#cbd5e1;letter-spacing:.06em}
@@ -146,17 +157,27 @@ URLクエリパラメータによる初期表示制御
     .thumbnail-placeholder{height:180px;font-size:12px;border-radius:8px}
   }
   .nav{margin-top:20px;color:var(--muted);font-size:12px}
-  .count-display{margin:8px 0;text-align:right}
+  .count-display{margin:8px 0;display:flex;justify-content:space-between;align-items:center}
   .count-text{color:var(--muted);font-size:14px;font-weight:600}
   @media(max-width:480px){
     .count-display{margin:6px 0;text-align:center}
     .count-text{font-size:13px}
   }
-  .calendar-btn{position:fixed;bottom:24px;right:24px;width:64px;height:64px;border-radius:50%;background:var(--accent);color:#00131f;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(29,155,240,0.4);display:flex;align-items:center;justify-content:center;font-size:28px;z-index:1000;transition:all 0.3s ease}
-  .calendar-btn:hover{transform:scale(1.1);box-shadow:0 6px 24px rgba(29,155,240,0.6)}
-  .calendar-btn:active{transform:scale(0.95)}
+  .fab-stack{position:fixed;right:20px;bottom:24px;z-index:1000;display:flex;flex-direction:column;align-items:flex-end;gap:12px}
+  .fab-item{display:flex;align-items:center;gap:8px;border:none;background:none;padding:0;cursor:pointer;text-decoration:none;font-family:inherit;-webkit-tap-highlight-color:transparent}
+  .fab-label{background:rgba(22,24,28,0.92);color:var(--ink);border:1px solid #2f3336;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:700;white-space:nowrap}
+  .fab-circle{width:56px;height:56px;border-radius:50%;background:var(--accent);color:#00131f;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(29,155,240,0.4);transition:transform 0.2s ease}
+  .fab-circle svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .fab-item:hover .fab-circle{transform:scale(1.08)}
+  .fab-item:active .fab-circle{transform:scale(0.95)}
   @media(max-width:480px){
-    .calendar-btn{width:56px;height:56px;bottom:20px;right:20px;font-size:24px}
+    .fab-stack{right:12px;bottom:16px;gap:10px}
+    .fab-circle{width:48px;height:48px}
+    .fab-circle svg{width:22px;height:22px}
+    .fab-label{font-size:12px;padding:5px 10px;transition:opacity 0.2s ease}
+    /* スマホでは下にスクロールしたら名前を隠し、カードにかぶらないようにする */
+    .fab-stack.compact .fab-label{opacity:0;pointer-events:none}
+    .tab{font-size:15px}
   }
   .calendar-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(20,40,55,0.6);backdrop-filter:blur(6px);z-index:2000;display:none;align-items:center;justify-content:center;padding:16px}
   .calendar-modal.active{display:flex}
@@ -266,29 +287,37 @@ URLクエリパラメータによる初期表示制御
 <body>
 <div class="wrap">
   <header>
-    <img class="logo" src="https://pbs.twimg.com/profile_images/1443822882446987270/k2RuYyGA_400x400.jpg" alt="墨場文庫ロゴ">
+    <img class="logo" src="https://pbs.twimg.com/profile_images/1443822882446987270/k2RuYyGA_400x400.jpg" alt="墓場文庫ロゴ">
     <div>
       <h1>墓場文庫｜最新情報ポータル</h1>
       <div class="updated">更新：<time id="updated"></time></div>
     </div>
   </header>
-  <a class="share-entry" href="share.html">シェア画像をつくる</a>
-  <div id="controls" class="controls"></div>
-  <div id="sortControls" class="controls">
-    <span class="control-label">並び順：</span>
-  </div>
-  <div id="statusControls" class="controls">
-    <span class="control-label">期間：</span>
-  </div>
+  <p class="site-desc">墓場文庫（『都市伝説解体センター』ほか）のグッズ・イベント・本などの最新情報をまとめています。</p>
+  <div id="statusTabs" class="tabs" role="tablist"></div>
+  <div id="controls" class="cat-row"></div>
   <div class="count-display">
     <span id="itemCount" class="count-text">0件の情報</span>
+    <select id="sortSelect" class="sort-select" aria-label="並び順">
+      <option value="desc">新しい順</option>
+      <option value="asc">古い順</option>
+    </select>
   </div>
   <div id="list" class="grid" aria-live="polite"></div>
   <div class="nav">※情報は古い場合がありますので予めご了承ください。</div>
 </div>
 
 <!-- カレンダーボタン -->
-<button class="calendar-btn" id="calendarBtn" aria-label="カレンダーを開く">📅</button>
+<div class="fab-stack">
+  <a class="fab-item" href="share.html">
+    <span class="fab-label">予定を画像にする</span>
+    <span class="fab-circle"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="1.8"/><path d="M21 16l-5-5-8 8"/></svg></span>
+  </a>
+  <button class="fab-item" id="calendarBtn" aria-label="カレンダーを開く">
+    <span class="fab-label">カレンダー</span>
+    <span class="fab-circle"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>
+  </button>
+</div>
 
 <!-- 日付イベント選択モーダル -->
 <div class="day-events-modal" id="dayEventsModal">
@@ -318,7 +347,7 @@ URLクエリパラメータによる初期表示制御
         <button class="calendar-nav-btn" id="prevMonth">← 前月</button>
         <button class="calendar-nav-btn" id="currentMonth">今月</button>
         <button class="calendar-nav-btn" id="nextMonth">翌月 →</button>
-        <a class="calendar-nav-btn calendar-share-btn" href="share.html">シェア画像をつくる</a>
+        <a class="calendar-nav-btn calendar-share-btn" id="calendarShareBtn" href="share.html">この月を画像にする</a>
       </div>
       <button class="calendar-close" id="calendarClose">✕</button>
     </div>
@@ -380,43 +409,25 @@ for(const t of types){
   controls.appendChild(b);
 }
 
-// 並び順ボタン
-const sortControls = document.getElementById('sortControls');
-const sortOptions = [
-  {value: 'desc', label: '新しい順', icon: '▼'},
-  {value: 'asc', label: '古い順', icon: '▲'}
-];
+// 並び順セレクト
+const sortSelect = document.getElementById('sortSelect');
+sortSelect.value = sortOrder;
+sortSelect.onchange = ()=>{ sortOrder = sortSelect.value; render(); };
 
-for(const option of sortOptions){
-  const b = document.createElement('button');
-  b.className = 'chip'; b.dataset.sort = option.value; b.dataset.active = option.value===sortOrder;
-  b.innerHTML = `<span class="chip-icon">${option.icon}</span>${option.label}`;
-  b.onclick = ()=>{
-    sortOrder = option.value; 
-    render(); 
-    [...sortControls.children].forEach(x=>x.dataset && (x.dataset.active=(x===b)));
-  };
-  sortControls.appendChild(b);
-}
-
-// 期間ステータスボタン
-const statusControls = document.getElementById('statusControls');
+// 期間タブ
+const statusTabs = document.getElementById('statusTabs');
 const statusOptions = [
-  {value: 'ended', label: '終了', icon: '⚫'},
-  {value: 'current', label: '開催中', icon: '🔴'},
-  {value: 'upcoming', label: '予定', icon: '📅'}
+  {value: 'current', label: 'いま開催中'},
+  {value: 'upcoming', label: 'これから'},
+  {value: 'ended', label: 'おわったもの'}
 ];
-
 for(const option of statusOptions){
   const b = document.createElement('button');
-  b.className = 'chip'; b.dataset.status = option.value; b.dataset.active = option.value===statusFilter;
-  b.innerHTML = `<span class="chip-icon">${option.icon}</span>${option.label}`;
-  b.onclick = ()=>{
-    statusFilter = option.value; 
-    render(); 
-    [...statusControls.children].forEach(x=>x.dataset && (x.dataset.active=(x===b)));
-  };
-  statusControls.appendChild(b);
+  b.className = 'tab'; b.dataset.status = option.value; b.setAttribute('role','tab');
+  b.setAttribute('aria-selected', option.value===statusFilter);
+  b.innerHTML = `${option.label}<span class="tab-count"></span>`;
+  b.onclick = ()=>{ statusFilter = option.value; render(); };
+  statusTabs.appendChild(b);
 }
 async function fetchData(url){
   try{
@@ -662,6 +673,15 @@ function render(){
     });
   }
   
+  // 期間タブの選択状態と件数（カテゴリ絞り込み込み）
+  const statusCounts = {current:0, upcoming:0, ended:0};
+  DATA.filter(it=> it.status==='公開').filter(it=> active==='all'? true : it.type===active)
+      .forEach(it=>{ statusCounts[getEventStatus(it)]++; });
+  [...statusTabs.children].forEach(b=>{
+    b.setAttribute('aria-selected', b.dataset.status===statusFilter);
+    b.querySelector('.tab-count').textContent = statusCounts[b.dataset.status];
+  });
+
   // 日付でソート
   filteredData.sort((a, b) => {
     const dateA = new Date(a.date || '2000-01-01');
@@ -694,6 +714,7 @@ function renderCalendar(year, month) {
   const calendarMonthTitle = document.getElementById('calendarMonthTitle');
 
   // タイトル更新
+  document.getElementById('calendarShareBtn').href = `share.html?kind=calendar&month=${year}-${String(month + 1).padStart(2, '0')}`;
   calendarMonthTitle.innerHTML = `<span class="cal-year">${year}年</span><span class="cal-month">${month + 1}</span><span class="cal-unit">月</span>`;
 
   // 月の最初と最後の日
@@ -1204,6 +1225,15 @@ nextMonthBtn.addEventListener('click', () => {
   currentCalendarDate = new Date(currentCalendarDate.getFullYear(), currentCalendarDate.getMonth() + 1, 1);
   renderCalendar(currentCalendarDate.getFullYear(), currentCalendarDate.getMonth());
 });
+
+// 右下ボタンの名前は、ページの先頭付近だけ表示する（スマホのみ CSS で隠す）
+(function(){
+  const fab = document.querySelector('.fab-stack');
+  if (!fab) return;
+  const update = () => fab.classList.toggle('compact', window.scrollY > 200);
+  window.addEventListener('scroll', update, {passive: true});
+  update();
+})();
 
 (async function init(){
   // 掲載データを読み込む。取得できなければ FALLBACK で最低限の表示を保つ

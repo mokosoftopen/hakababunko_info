@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>シェア画像をつくる｜墓場文庫 最新情報ポータル</title>
-<meta name="description" content="墓場文庫の最新情報ポータルから気になる予定を選んで、X でシェアできる画像をつくれます。">
+<title>予定を画像にする｜墓場文庫 最新情報ポータル</title>
+<meta name="description" content="墓場文庫の最新情報ポータルから気になる予定をえらぶと、X などに投稿できる画像になります。">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="墓場文庫｜最新情報ポータル">
-<meta property="og:title" content="シェア画像をつくる｜墓場文庫 最新情報ポータル">
-<meta property="og:description" content="気になる予定を選んで、X でシェアできる画像をつくれます。">
+<meta property="og:title" content="予定を画像にする｜墓場文庫 最新情報ポータル">
+<meta property="og:description" content="気になる予定をえらぶと、X などに投稿できる画像になります。">
 <meta property="og:url" content="https://info.hakaba-bunko.net/share.html">
 <meta property="og:image" content="https://info.hakaba-bunko.net/ogp.jpg">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="シェア画像をつくる｜墓場文庫 最新情報ポータル">
-<meta name="twitter:description" content="気になる予定を選んで、X でシェアできる画像をつくれます。">
+<meta name="twitter:title" content="予定を画像にする｜墓場文庫 最新情報ポータル">
+<meta name="twitter:description" content="気になる予定をえらぶと、X などに投稿できる画像になります。">
 <meta name="twitter:image" content="https://info.hakaba-bunko.net/ogp.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -39,91 +39,130 @@
 
   *{box-sizing:border-box}
   html,body{margin:0}
-  body{background:var(--line);color:var(--ink);font-family:"Zen Kaku Gothic New",sans-serif;font-weight:500;font-size:14px;line-height:1.5}
+  body{background:#eef5f9;color:var(--ink);font-family:"Zen Kaku Gothic New",sans-serif;font-weight:500;font-size:14px;line-height:1.6}
   button,input{font:inherit;color:inherit}
 
-  /* ===== 操作画面 ===== */
+  /* ===== 操作画面（やさしいトーン。境界線は薄く、面の色の違いで区切る） ===== */
   .app{display:flex;height:100vh}
-  .side{flex:none;width:440px;height:100%;overflow-y:auto;background:#fff;border-right:1px solid var(--line);padding:24px}
+  .side{flex:none;width:460px;height:100%;overflow-y:auto;padding:28px 28px 40px;background:#fffdf9}
   .main{flex:1;min-width:0;overflow:auto;padding:32px}
-  .back{display:inline-block;margin-bottom:12px;color:var(--accent);font-size:13px;font-weight:700;text-decoration:none}
+  .back{display:inline-block;color:var(--accent);font-size:14px;font-weight:700;text-decoration:none}
   .back:hover{text-decoration:underline}
-  .side h1{margin:0;font-size:20px;font-weight:900;letter-spacing:.04em}
-  .lead{margin:4px 0 0;color:var(--ink2);font-size:13px}
-  .edit-badge{display:inline-block;margin:8px 0 0;padding:4px 10px;border:1px solid var(--today);border-radius:4px;background:var(--today-bg);font-size:12px;font-weight:700}
-  .sec{margin-top:24px}
-  .sec-label{display:block;margin-bottom:8px;font-size:12px;font-weight:700;color:var(--ink2);letter-spacing:.08em}
-  .seg{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--accent);border-radius:8px;overflow:hidden}
-  .seg button{border:0;background:#fff;color:var(--accent);padding:8px 0;font-weight:700;cursor:pointer}
-  .seg button+button{border-left:1px solid var(--accent)}
-  .seg button.on{background:var(--accent);color:#fff}
-  .monthnav{display:flex;align-items:center;justify-content:space-between;margin-top:12px}
+  .side h1{margin:16px 0 0;font-size:24px;font-weight:900;line-height:1.4}
+  .lead{margin:8px 0 0;color:var(--ink2);font-size:14px;line-height:1.8}
+  .edit-badge{margin:12px 0 0;padding:8px 12px;border-radius:10px;background:var(--today-bg);font-size:13px;line-height:1.6}
+  .step{margin-top:32px}
+  .q{display:flex;align-items:center;gap:10px;margin:0 0 14px;font-size:17px;font-weight:700;line-height:1.5}
+  .num{flex:none;display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#e1eef6;color:var(--accent);font-family:"Outfit",sans-serif;font-size:14px;font-weight:700}
+
+  /* 1. 画像の形（見本の絵つきのカード） */
+  .kinds{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+  .kind{display:flex;flex-direction:column;align-items:center;gap:6px;min-height:132px;padding:12px 8px;border:2px solid transparent;border-radius:14px;background:#f3f8fb;color:var(--ink);text-align:center;cursor:pointer;transition:background .15s,border-color .15s}
+  .kind:hover{background:#eaf3f9}
+  .kind.on{border-color:var(--accent);background:#e6f2f9}
+  .kind:focus-visible{outline:3px solid rgba(46,127,174,.35);outline-offset:2px}
+  .kind-name{margin-top:2px;font-size:15px;font-weight:700;line-height:1.3}
+  .kind-desc{font-size:12px;line-height:1.5;color:var(--ink2)}
+  .kind-pic{position:relative;display:block;width:84px;height:48px;padding:6px;overflow:hidden;border-radius:8px;background:#fff}
+  .pic-list{display:flex;flex-direction:column;justify-content:space-between}
+  .pic-list i{display:flex;align-items:center;gap:4px;height:10px}
+  .pic-list i::before{content:"";flex:none;width:15px;height:10px;border-radius:2px;background:var(--c)}
+  .pic-list i::after{content:"";flex:1;height:4px;border-radius:2px;background:#d5e3ec}
+  .pic-list i:nth-child(1){--c:#d98a00}
+  .pic-list i:nth-child(2){--c:#15803d}
+  .pic-list i:nth-child(3){--c:#2f6fde}
+  .pic-cal b{position:absolute;left:6px;right:6px;top:6px;height:6px;border-radius:2px;background:#1e1e1e}
+  .pic-cal::before{content:"";position:absolute;left:6px;right:6px;top:15px;bottom:6px;background-image:linear-gradient(90deg,#e3edf3 1px,transparent 1px),linear-gradient(#e3edf3 1px,transparent 1px);background-size:calc(100% / 7) 9px}
+  .pic-cal i{position:absolute;height:5px;border-radius:2px}
+  .pic-cal i:nth-of-type(1){left:17px;width:34px;top:19px;background:#15803d}
+  .pic-cal i:nth-of-type(2){left:40px;width:30px;top:37px;background:#d98a00}
+  .pic-tile{display:grid;grid-template-columns:1fr 1fr;gap:3px;padding:5px}
+  .pic-tile i{border-radius:3px;background:linear-gradient(to top,rgba(18,30,40,.5) 0,rgba(18,30,40,.5) 35%,transparent 35%),var(--c)}
+  .pic-tile i:nth-child(1){--c:#2f6fde}
+  .pic-tile i:nth-child(2){--c:#d98a00}
+  .pic-tile i:nth-child(3){--c:#15803d}
+  .pic-tile i:nth-child(4){--c:#c2410c}
+  .monthnav{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:12px;padding:8px;border-radius:12px;background:#f3f8fb}
   .monthnav[hidden]{display:none}
-  .monthnav span{font-weight:700;font-size:15px}
-  .sbtn{border:1px solid var(--line);background:#fff;border-radius:999px;padding:4px 12px;font-size:13px;font-weight:700;color:var(--accent);cursor:pointer}
-  .sbtn:hover{border-color:var(--accent)}
-  .text{width:100%;height:36px;border:1px solid var(--line);border-radius:8px;padding:0 12px;background:#fff}
-  .text:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px rgba(46,127,174,.2)}
+  .monthnav span{font-size:15px;font-weight:700}
+  .soft-btn{min-height:40px;padding:0 14px;border:0;border-radius:10px;background:#fff;color:var(--accent);font-size:14px;font-weight:700;cursor:pointer}
+  .soft-btn:hover{background:#e6f2f9}
+
+  /* 2. 予定えらび（絞り込みは折りたたんで控えめに） */
+  .filters{margin:0 0 14px;border-radius:12px;background:#f3f8fb}
+  .filters summary{display:flex;flex-wrap:wrap;align-items:center;gap:2px 10px;padding:12px 14px;list-style:none;color:var(--ink2);font-size:14px;font-weight:700;cursor:pointer}
+  .filters summary::-webkit-details-marker{display:none}
+  .filters summary::before{content:"";flex:none;width:7px;height:7px;margin-right:2px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(-45deg);transition:transform .15s}
+  .filters[open] summary::before{transform:rotate(45deg)}
+  .f-now{font-size:13px;font-weight:500}
+  .f-body{padding:0 14px 14px}
+  .hint{margin:0;font-size:13px;color:var(--ink2)}
+  .f-q{margin:14px 0 8px;font-size:14px;font-weight:700}
+  .text{width:100%;height:42px;padding:0 12px;border:1px solid #d9e6ee;border-radius:10px;background:#fff}
+  .text:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(46,127,174,.18)}
   .period{display:flex;align-items:center;gap:8px}
   .period .text{flex:1;min-width:0}
-  .types{display:flex;flex-wrap:wrap;gap:8px}
-  .types label{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:4px 12px 4px 8px;font-size:13px;font-weight:700;cursor:pointer}
-  .types input{margin:0}
-  .types .dot{width:10px;height:10px;border-radius:3px;background:var(--c)}
-  .warn{background:var(--today-bg);border:1px solid var(--today);border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:13px}
+  .types{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:6px}
+  .types label{display:flex;align-items:center;gap:8px;min-height:40px;padding:0 10px;border-radius:10px;background:#fff;font-size:14px;cursor:pointer}
+  .types input{width:18px;height:18px;margin:0;accent-color:var(--accent)}
+  .types .dot{flex:none;width:10px;height:10px;border-radius:50%;background:var(--c)}
+  .count{margin:0 0 10px;font-size:14px;color:var(--ink2)}
+  .warn{margin:0 0 12px;padding:10px 14px;border-radius:12px;background:var(--today-bg);font-size:13px;line-height:1.7}
   .warn[hidden]{display:none}
   .warn p{margin:0}
   .warn p+p{margin-top:4px}
-  .actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;max-width:480px}
-  .btn{height:40px;border:1px solid var(--accent);border-radius:8px;background:#fff;color:var(--accent);font-weight:700;cursor:pointer}
-  .btn.make{min-width:240px;padding:0 24px}
-  .btn.primary{background:var(--accent);color:#fff}
-  .btn:disabled{opacity:.5;cursor:default}
-  .status{min-height:20px;margin:8px 0 0;font-size:13px;color:var(--accent)}
-  .status.err{color:#dc2626}
-  .note{margin:4px 0 0;font-size:12px;color:var(--ink2)}
-  .cands{border-top:1px solid var(--line)}
-  .cand{padding:8px 0;border-bottom:1px solid var(--line)}
-  .cand-pick{display:grid;grid-template-columns:20px 72px minmax(0,1fr);gap:10px;align-items:center;min-height:48px;cursor:pointer}
-  .cand-pick input{width:18px;height:18px;margin:0;accent-color:var(--accent)}
-  .cand-thumb{display:block;width:72px;height:40px;border-radius:4px;object-fit:cover;background:var(--line)}
+  .cands{display:flex;flex-direction:column;gap:6px}
+  .cand{border-radius:12px;background:#fff;box-shadow:0 0 0 1px #edf2f5;transition:background .15s}
+  .cand.on{background:#e6f2f9;box-shadow:none}
+  .cand-pick{display:grid;grid-template-columns:22px 80px minmax(0,1fr);gap:12px;align-items:center;min-height:64px;padding:10px 12px;cursor:pointer}
+  .cand-pick input{width:20px;height:20px;margin:0;accent-color:var(--accent)}
+  .cand-thumb{display:block;width:80px;height:45px;border-radius:8px;object-fit:cover;background:#e7eef3}
   .cand-thumb.noimg{display:flex;align-items:center;justify-content:center;background:var(--c);color:#fff;font-size:11px;font-weight:700}
   .cand-meta{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;min-width:0}
-  .cand-date{font-family:"Outfit","Zen Kaku Gothic New",sans-serif;font-size:13px;font-weight:700}
-  .cand-off{display:none;font-size:11px;font-weight:700;color:#c2410c}
-  .cand.off .cand-off{display:inline}
-  .cand-title{flex-basis:100%;font-size:13px;font-weight:500;line-height:1.4;color:var(--ink);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-  .cand .text.cand-label{display:block;width:calc(100% - 30px);height:32px;margin:6px 0 0 30px;font-size:13px}
-  .empty-note{margin:0;padding:12px 0;color:var(--ink2);font-size:13px}
-  .preview{position:relative;width:100%;max-width:1200px;overflow:hidden;border-radius:4px;background:var(--frame);box-shadow:0 6px 24px rgba(34,57,74,.18)}
+  .cand-date{font-family:"Outfit","Zen Kaku Gothic New",sans-serif;font-size:14px;font-weight:700}
+  .cand-off{display:none;padding:1px 8px;border-radius:6px;background:var(--today-bg);color:#8a5300;font-size:12px}
+  .cand.off .cand-off{display:inline-block}
+  .cand-title{flex-basis:100%;font-size:13px;font-weight:500;line-height:1.5;color:var(--ink);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .cand .text.cand-label{display:block;width:calc(100% - 24px);height:40px;margin:0 12px 10px;font-size:14px}
+  .empty-note{margin:0;padding:16px;border-radius:12px;background:#f3f8fb;color:var(--ink2);font-size:14px;line-height:1.7}
+
+  /* 見本と 3. 画像づくり */
+  .preview{position:relative;width:100%;max-width:1200px;overflow:hidden;border-radius:12px;background:var(--frame);box-shadow:0 4px 18px rgba(34,57,74,.10)}
   .scaler{width:1200px;height:675px;transform-origin:0 0}
-  .cap{margin:12px 0 0;font-size:12px;color:var(--ink2)}
-  .out{max-width:1200px;margin-top:24px}
-  .result{margin-top:16px}
+  .cap{margin:10px 0 0;font-size:13px;color:var(--ink2)}
+  .out{max-width:1200px;margin-top:28px}
+  .btn{min-height:48px;padding:0 20px;border:2px solid #cfe3ef;border-radius:12px;background:#fff;color:var(--accent);font-size:15px;font-weight:700;cursor:pointer;transition:background .15s}
+  .btn:hover{background:#f3f8fb}
+  .btn.primary{border-color:var(--accent);background:var(--accent);color:#fff}
+  .btn.primary:hover{background:#2a74a0}
+  .btn.make{min-width:280px;min-height:56px;font-size:17px}
+  .btn:disabled{opacity:.55;cursor:default}
+  .status{min-height:22px;margin:12px 0 0;font-size:14px;line-height:1.7}
+  .status.err{color:#b42318}
+  .result{margin-top:16px;padding:16px;border-radius:14px;background:#fff}
   .result[hidden]{display:none}
-  .result img{display:block;width:100%;height:auto;margin-top:12px;border-radius:4px;box-shadow:0 6px 24px rgba(34,57,74,.18)}
-  /* スマホ: 操作パネルをプレビューの上に積む。タップしやすい大きさにし、iOS の入力時ズームを避けて 16px にする */
+  .actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;max-width:560px}
+  .result img{display:block;width:100%;height:auto;margin-top:14px;border-radius:10px}
+  .note{margin:10px 0 0;font-size:13px;color:var(--ink2);line-height:1.7}
+
+  /* スマホ: 操作パネルを見本の上に積む。iOS の入力時ズームを避けて入力欄は 16px にする */
   @media (max-width:960px){
     .app{flex-direction:column;height:auto}
-    .side{width:auto;height:auto;padding:16px;border-right:0;border-bottom:1px solid var(--line)}
-    .main{overflow:visible;padding:16px}
-    .seg button{padding:12px 0}
-    .sbtn{padding:8px 14px}
-    .text{height:44px;font-size:16px}
+    .side{width:auto;height:auto;padding:20px 16px 28px}
+    .main{overflow:visible;padding:20px 16px 32px}
+    .side h1{font-size:22px}
+    .kind-pic{width:72px;height:42px}
+    .text{height:46px;font-size:16px}
     .period .text{-webkit-appearance:none;appearance:none}
-    .types label{padding:8px 14px 8px 10px}
     .cands{max-height:60vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
-    .cand-pick{grid-template-columns:24px 72px minmax(0,1fr);min-height:56px}
-    .cand-pick input{width:22px;height:22px}
-    .cand .text.cand-label{width:calc(100% - 34px);height:40px;margin-left:34px;font-size:16px}
-    .btn{height:48px}
+    .cand .text.cand-label{font-size:16px}
     .btn.make{width:100%;min-width:0}
     .actions{max-width:none}
   }
 
   /* ===== 書き出し対象（1200×675） ===== */
   .chip{display:inline-flex;align-items:center;justify-content:center;border-radius:4px;background:var(--c);color:#fff;font-weight:700;white-space:nowrap;letter-spacing:.04em}
-  .chip.sm{height:20px;padding:0 6px;font-size:11px}
+  .chip.sm{height:20px;padding:0 7px;border-radius:6px;font-size:11px}
 
   .stage{width:1200px;height:675px;overflow:hidden;display:flex;flex-direction:column;padding:24px 32px 20px;background:#bcd7e6;color:#22394a;font-family:"Zen Kaku Gothic New",sans-serif;font-weight:500;line-height:1.4;-webkit-font-smoothing:antialiased}
   .s-head{flex:none;height:48px;display:flex;align-items:center;gap:16px}
@@ -142,29 +181,58 @@
   .s-url{font-family:"Outfit",sans-serif;font-size:15px;font-weight:700;color:#2e7fae;letter-spacing:.02em}
   .s-empty{height:100%;display:flex;align-items:center;justify-content:center;border-radius:14px;background:#fff;color:#4d6b7d;font-size:20px;font-weight:700}
 
-  /* リスト */
-  .l-panel{height:100%;display:flex;flex-direction:column;justify-content:center;padding:8px 32px;border-radius:14px;background:#fff}
-  .l-row{display:grid;align-items:center;column-gap:24px;min-height:0;border-top:1px solid #dce8ef}
+  /* リスト（サムネイル付き。寸法は listLayout で件数から決める） */
+  .l-panel{height:100%;display:flex;flex-direction:column;justify-content:center;padding:12px 24px;border-radius:14px;background:#fff}
+  .l-row{flex:none;display:flex;align-items:center;gap:24px;min-height:0;border-top:1px solid #dce8ef}
   .l-row:first-child{border-top:0}
+  .l-thumb{flex:none;position:relative;overflow:hidden;border-radius:10px;background:var(--c)}
+  .l-thumb img{position:absolute;left:0;top:0;display:block;width:100%;height:100%;object-fit:cover}
+  .l-thumb.noimg{display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;letter-spacing:.08em}
+  .l-text{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center}
+  .l-top{display:flex;flex-wrap:wrap;align-items:center;row-gap:8px}
   .l-date{white-space:nowrap;line-height:1;color:#22394a}
   .l-date .d-md{font-family:"Outfit",sans-serif;font-weight:800;letter-spacing:.01em}
   .l-date .d-dow{margin-left:2px;font-weight:700;color:#4d6b7d}
   .l-date .d-sun{color:#d64545}
   .l-date .d-sat{color:#2f7fc4}
-  .l-date .d-sep{margin:0 8px;color:#4d6b7d}
-  .l-label{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;overflow-wrap:anywhere;font-weight:700;line-height:1.4}
-  .l-md .l-row{grid-template-columns:268px 96px minmax(0,1fr)}
-  .l-md .d-md{font-size:30px}
-  .l-md .d-dow{font-size:15px}
-  .l-md .d-sep{font-size:18px}
-  .l-md .chip{height:28px;min-width:84px;padding:0 10px;font-size:14px}
-  .l-md .l-label{font-size:22px}
-  .l-lg .l-row{grid-template-columns:340px 112px minmax(0,1fr)}
-  .l-lg .d-md{font-size:40px}
-  .l-lg .d-dow{font-size:19px}
-  .l-lg .d-sep{font-size:24px}
-  .l-lg .chip{height:34px;min-width:96px;padding:0 12px;font-size:16px}
-  .l-lg .l-label{font-size:28px}
+  .l-date .d-sep{margin:0 6px;color:#4d6b7d}
+  .l-label{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;overflow-wrap:anywhere;font-weight:700;line-height:1.35;color:#22394a}
+  /* 件数ごとの大きさ（l5 = 5 件 … l1 = 1 件） */
+  .l5 .l-top{column-gap:12px}
+  .l5 .d-md{font-size:26px}
+  .l5 .d-dow{font-size:13px}
+  .l5 .d-sep{font-size:16px}
+  .l5 .chip{height:24px;padding:0 9px;font-size:13px}
+  .l5 .l-label{margin-top:6px;font-size:20px}
+  .l5 .l-thumb.noimg{font-size:16px}
+  .l4 .l-top{column-gap:14px}
+  .l4 .d-md{font-size:30px}
+  .l4 .d-dow{font-size:15px}
+  .l4 .d-sep{font-size:18px}
+  .l4 .chip{height:26px;padding:0 10px;font-size:14px}
+  .l4 .l-label{margin-top:8px;font-size:22px}
+  .l4 .l-thumb.noimg{font-size:17px}
+  .l3 .l-top{column-gap:14px}
+  .l3 .d-md{font-size:36px}
+  .l3 .d-dow{font-size:17px}
+  .l3 .d-sep{font-size:20px}
+  .l3 .chip{height:30px;padding:0 12px;font-size:15px}
+  .l3 .l-label{margin-top:10px;font-size:26px}
+  .l3 .l-thumb.noimg{font-size:20px}
+  .l2 .l-top{column-gap:16px}
+  .l2 .d-md{font-size:44px}
+  .l2 .d-dow{font-size:20px}
+  .l2 .d-sep{font-size:24px}
+  .l2 .chip{height:34px;padding:0 14px;font-size:17px}
+  .l2 .l-label{margin-top:14px;font-size:32px}
+  .l2 .l-thumb.noimg{font-size:24px}
+  .l1 .l-top{column-gap:16px}
+  .l1 .d-md{font-size:48px}
+  .l1 .d-dow{font-size:22px}
+  .l1 .d-sep{font-size:26px}
+  .l1 .chip{height:36px;padding:0 14px;font-size:18px}
+  .l1 .l-label{margin-top:16px;font-size:36px}
+  .l1 .l-thumb.noimg{font-size:28px}
 
   /* カレンダー */
   .c-panel{height:100%;display:flex;flex-direction:column;padding:12px;border-radius:14px;background:#fff}
@@ -244,42 +312,55 @@
 <body>
 <div class="app">
   <aside class="side">
-    <a class="back" href="./">← 最新情報ポータルへ戻る</a>
-    <h1>シェア画像をつくる</h1>
-    <p class="lead">気になる予定を選んで、X でシェアできる画像をつくれます。</p>
+    <a class="back" href="./">← 最新情報ポータルにもどる</a>
+    <h1>予定を画像にする</h1>
+    <p class="lead">気になる予定をえらぶと、X などに投稿できる画像になります。</p>
 
-    <section class="sec" id="kindSec">
-      <span class="sec-label">型</span>
-      <div class="seg" id="kindSeg">
-        <button type="button" data-kind="list" class="on">リスト</button>
-        <button type="button" data-kind="calendar">カレンダー</button>
-        <button type="button" data-kind="tile">タイル</button>
+    <section class="step" id="kindSec">
+      <h2 class="q"><span class="num">1</span>どんな画像にしますか？</h2>
+      <div class="kinds" id="kindSeg">
+        <button type="button" class="kind on" data-kind="list" aria-pressed="true">
+          <span class="kind-pic pic-list" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="kind-name">リスト</span>
+          <span class="kind-desc">写真つきの一覧</span>
+        </button>
+        <button type="button" class="kind" data-kind="calendar" aria-pressed="false">
+          <span class="kind-pic pic-cal" aria-hidden="true"><b></b><i></i><i></i></span>
+          <span class="kind-name">カレンダー</span>
+          <span class="kind-desc">月ごとの予定表</span>
+        </button>
+        <button type="button" class="kind" data-kind="tile" aria-pressed="false">
+          <span class="kind-pic pic-tile" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          <span class="kind-name">画像タイル</span>
+          <span class="kind-desc">写真を大きく並べる</span>
+        </button>
       </div>
       <div class="monthnav" id="monthNav" hidden>
-        <button type="button" class="sbtn" id="prevMonth">← 前月</button>
+        <button type="button" class="soft-btn" id="prevMonth">← 前の月</button>
         <span id="monthLabel"></span>
-        <button type="button" class="sbtn" id="nextMonth">翌月 →</button>
+        <button type="button" class="soft-btn" id="nextMonth">次の月 →</button>
       </div>
     </section>
 
-    <section class="sec">
-      <span class="sec-label">期間</span>
-      <div class="period">
-        <input type="date" class="text" id="fromDate" aria-label="開始日">
-        <span>〜</span>
-        <input type="date" class="text" id="toDate" aria-label="終了日">
-      </div>
-    </section>
-
-    <section class="sec">
-      <span class="sec-label">種別</span>
-      <div class="types" id="typeFilter"></div>
-    </section>
-
-    <section class="sec">
-      <span class="sec-label">候補 <span id="candCount"></span></span>
+    <section class="step">
+      <h2 class="q"><span class="num">2</span>のせたい予定にチェックを入れてください</h2>
+      <details class="filters">
+        <summary><span>期間や種類をしぼる</span><span class="f-now" id="filterNow"></span></summary>
+        <div class="f-body">
+          <p class="hint">ふだんはこのままで大丈夫です。</p>
+          <p class="f-q">いつの予定をのせますか？</p>
+          <div class="period">
+            <input type="date" class="text" id="fromDate" aria-label="この日から">
+            <span>〜</span>
+            <input type="date" class="text" id="toDate" aria-label="この日まで">
+          </div>
+          <p class="f-q">のせる予定の種類</p>
+          <div class="types" id="typeFilter"></div>
+        </div>
+      </details>
+      <p class="count" id="candCount"></p>
       <div class="warn" id="warn" hidden></div>
-      <div class="cands" id="cands"><p class="empty-note">読み込み中…</p></div>
+      <div class="cands" id="cands"><p class="empty-note">予定を読み込んでいます…</p></div>
     </section>
   </aside>
 
@@ -289,9 +370,10 @@
         <div class="stage" id="stage"></div>
       </div>
     </div>
-    <p class="cap">プレビュー（画像は 2400×1350 の PNG になります）</p>
+    <p class="cap">できあがりの見本です。</p>
 
     <section class="out">
+      <h2 class="q"><span class="num">3</span>画像をつくって、保存やシェアをしましょう</h2>
       <button type="button" class="btn primary make" id="makeBtn">画像をつくる</button>
       <p class="status" id="status"></p>
       <div class="result" id="result" hidden>
@@ -538,6 +620,40 @@ function tileLayout(n, W, H, gap) {
   return best;
 }
 
+// リスト型の寸法（最大 5 件）。行の高さは内側の高さを件数で等分し、サムネイルは 16:9 で行の上下に余白を残す。
+// 1 件のときはサムネイルが大きくなりすぎて文字の場所がなくならないよう、幅を内側の半分までにする
+function listLayout(n, innerW, innerH) {
+  const count = Math.min(Math.max(n, 1), 5);
+  const rowH = Math.floor(innerH / count);
+  const pad = [24, 16, 12, 10, 8][count - 1];
+  let thumbH = rowH - pad * 2;
+  let thumbW = Math.round(thumbH * 16 / 9);
+  const maxW = Math.floor(innerW / 2);
+  if (thumbW > maxW) {
+    thumbW = maxW;
+    thumbH = Math.round(maxW * 9 / 16);
+  }
+  return {rowH, pad, thumbW, thumbH, size: 'l' + count};
+}
+
+// URL の指定（?kind=calendar&month=2026-11&edit=1）を読む。不正な値は null（＝今の既定値のまま）
+function parseShareParams(search) {
+  const q = new URLSearchParams(String(search || ''));
+  const kind = q.get('kind');
+  const m = /^(\d{4})-(\d{2})$/.exec(q.get('month') || '');
+  let month = null;
+  if (m) {
+    const y = Number(m[1]);
+    const mo = Number(m[2]);
+    if (y >= 1970 && mo >= 1 && mo <= 12) month = {year: y, month: mo - 1};
+  }
+  return {
+    kind: ['list', 'calendar', 'tile'].includes(kind) ? kind : null,
+    month,
+    edit: q.get('edit') === '1'
+  };
+}
+
 // ---- 書き出し用フォント（画像に出てくる文字だけを Google Fonts の text= で取り寄せる） ----
 const FONT_CSS_BASE = 'https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;800&family=Zen+Kaku+Gothic+New:wght@500;700;900';
 
@@ -589,12 +705,16 @@ function isWebKitUA(ua) {
     normal: {numH: 22, laneH: 17, gap: 3, padB: 3},
     dense:  {numH: 19, laneH: 15, gap: 2, padB: 3}   // 6 週の月
   };
-  const LIST_MAX = 6;
+  const LIST_MAX = 5;
+  const LIST_INNER_W = BODY_W - 48;   // .l-panel の左右余白 24×2
+  const LIST_INNER_H = BODY_H - 24;   // .l-panel の上下余白 12×2
   const TILE_MIN = 4;
   const TILE_MAX = 8;
 
   // ?edit=1 のときだけ見出しとラベルの編集欄を出す（鍵ではない。公式風の文言を手軽に作れないようにするため）
-  const EDIT = new URLSearchParams(location.search).get('edit') === '1';
+  // URL で初期状態を指定できる（?kind=calendar&month=2026-11。トップページのカレンダーから開くため）
+  const PARAMS = parseShareParams(location.search);
+  const EDIT = PARAMS.edit;
   // WebKit は html-to-image の初回描画で画像やフォントが乗らないことがあるので、本番の前に空打ちする
   const IS_WEBKIT = isWebKitUA(navigator.userAgent);
   const WEBKIT_WARMUP = 2;
@@ -623,10 +743,11 @@ function isWebKitUA(ua) {
 
   const state = {
     data: [],
-    kind: 'list',
+    kind: PARAMS.kind || 'list',
     heading: 'これからの予定',
-    from: today,
-    to: addDays(today, 30),
+    // month 指定があればその月の 1 日〜末日。なければ今日から 30 日後まで
+    from: PARAMS.month ? monthGrid(PARAMS.month.year, PARAMS.month.month).first : today,
+    to: PARAMS.month ? monthGrid(PARAMS.month.year, PARAMS.month.month).last : addDays(today, 30),
     types: new Set(TYPE_ORDER),
     checked: new Map(),   // 手で触った行だけ（key → bool）。触っていない行は初期選択の規則に従う
     labels: new Map(),    // 編集したラベル（key → 文字列）。保存はしない
@@ -672,12 +793,24 @@ function isWebKitUA(ua) {
   }
 
   // ===== 候補一覧 =====
+  // 折りたたんだ「期間や種類をしぼる」にも、今の期間と種類を出しておく
+  function renderFilterNow() {
+    const p = period();
+    const md = d => `${d.getMonth() + 1}月${d.getDate()}日`;
+    const yr = p.from.getFullYear() !== today.getFullYear() || p.to.getFullYear() !== p.from.getFullYear() ? `${p.from.getFullYear()}年` : '';
+    const yrTo = p.to.getFullYear() !== p.from.getFullYear() ? `${p.to.getFullYear()}年` : '';
+    const types = state.types.size === TYPE_ORDER.length ? 'すべての種類'
+      : state.types.size ? TYPE_ORDER.filter(t => state.types.has(t)).map(typeLabel).join('・') : '種類がえらばれていません';
+    $('filterNow').textContent = `いま：${yr}${md(p.from)}〜${yrTo}${md(p.to)}・${types}`;
+  }
+
   function renderCandidates() {
     const p = period();
     state.cands = buildCandidates(state.data, {from: p.from, to: p.to, types: state.types});
     const refYear = p.from.getFullYear();
+    renderFilterNow();
     if (!state.cands.length) {
-      candsEl.innerHTML = '<p class="empty-note">この期間・種別に当てはまる予定はありません。</p>';
+      candsEl.innerHTML = '<p class="empty-note">この期間・種類にあてはまる予定はありません。「期間や種類をしぼる」で変えてみてください。</p>';
       return;
     }
     candsEl.innerHTML = state.cands.map((c, i) => {
@@ -686,18 +819,18 @@ function isWebKitUA(ua) {
       const thumbHtml = thumb && !failedThumbs.has(thumb)
         ? `<img class="cand-thumb" loading="lazy" crossorigin="anonymous" src="${esc(thumb)}" alt="">`
         : `<span class="cand-thumb noimg">${esc(typeLabel(r.type))}</span>`;
-      return `<div class="cand ty-${esc(r.type)}" data-i="${i}">
+      return `<div class="cand ty-${esc(r.type)}${isChecked(r) ? ' on' : ''}" data-i="${i}">
         <label class="cand-pick">
           <input type="checkbox"${isChecked(r) ? ' checked' : ''}>
           ${thumbHtml}
           <span class="cand-meta">
             <span class="cand-date">${esc(formatRange(c.range, refYear))}</span>
             <span class="chip sm">${esc(typeLabel(r.type))}</span>
-            <span class="cand-off">画像に入っていません</span>
+            <span class="cand-off">今回の画像にはのりません</span>
             ${EDIT ? '' : `<span class="cand-title">${esc(labelOf(r))}</span>`}
           </span>
         </label>
-        ${EDIT ? `<input type="text" class="text cand-label" value="${esc(labelOf(r))}" aria-label="画像に使うラベル">` : ''}
+        ${EDIT ? `<input type="text" class="text cand-label" value="${esc(labelOf(r))}" aria-label="画像にのせる文字" placeholder="画像にのせる文字">` : ''}
       </div>`;
     }).join('');
   }
@@ -761,21 +894,32 @@ function isWebKitUA(ua) {
     return `<span class="yr">${y}</span>${tokensHtml(dateTokens(range, y))}`;
   }
 
+  // リストのサムネイルが読めないときの代わり（種別色のブロックに種別名）
+  function listThumbFallback(type) {
+    return `<span>${esc(typeLabel(type))}</span>`;
+  }
+
   function renderList(items, warns, shown) {
     const list = items.slice(0, LIST_MAX);
     if (items.length > LIST_MAX) {
-      warns.push(`リストは ${LIST_MAX} 件までです。選択中の ${items.length} 件のうち、先頭 ${LIST_MAX} 件だけを載せています。`);
+      warns.push(`リストにのせられるのは ${LIST_MAX} 件までです。上から ${LIST_MAX} 件をのせています。`);
     }
     list.forEach(it => shown.add(it.key));
-    if (!list.length) return '<div class="s-empty">予定が選ばれていません</div>';
-    const large = list.length <= 3;
-    const rowH = Math.floor(Math.min(large ? 150 : 129, (BODY_H - 16) / list.length));
-    const rows = list.map(it => `<div class="l-row" style="height:${rowH}px">
-        <div class="l-date">${tokensHtml(dateTokens(it.range, null))}</div>
-        <div><span class="chip ty-${esc(it.type)}">${esc(typeLabel(it.type))}</span></div>
-        <div class="l-label">${esc(it.label)}</div>
-      </div>`).join('');
-    return `<div class="l-panel ${large ? 'l-lg' : 'l-md'}">${rows}</div>`;
+    if (!list.length) return '<div class="s-empty">予定がまだ選ばれていません</div>';
+    const lay = listLayout(list.length, LIST_INNER_W, LIST_INNER_H);
+    const rows = list.map(it => {
+      const useImg = it.thumb && !failedThumbs.has(it.thumb);
+      const thumb = `<div class="l-thumb ty-${esc(it.type)}${useImg ? '' : ' noimg'}" data-type="${esc(it.type)}" style="width:${lay.thumbW}px;height:${lay.thumbH}px">${
+        useImg ? `<img crossorigin="anonymous" src="${esc(it.thumb)}" alt="">` : listThumbFallback(it.type)}</div>`;
+      return `<div class="l-row" style="height:${lay.rowH}px">
+        ${thumb}
+        <div class="l-text">
+          <div class="l-top"><span class="l-date">${tokensHtml(dateTokens(it.range, null))}</span><span class="chip ty-${esc(it.type)}">${esc(typeLabel(it.type))}</span></div>
+          <div class="l-label">${esc(it.label)}</div>
+        </div>
+      </div>`;
+    }).join('');
+    return `<div class="l-panel ${lay.size}">${rows}</div>`;
   }
 
   function renderCalendar(items, warns, shown) {
@@ -793,10 +937,10 @@ function isWebKitUA(ua) {
       if (!outside.includes(idx) && !hidden.has(idx)) shown.add(it.key);
     });
     if (outside.length) {
-      warns.push(`カレンダーは 1 か月分です。表示中の ${m + 1} 月に重ならない ${outside.length} 件は載っていません。`);
+      warns.push(`カレンダーには ${m + 1} 月の予定だけがのります。ほかの月の ${outside.length} 件はのっていません。`);
     }
     if (hidden.size) {
-      warns.push(`枠に入りきらない予定が ${hidden.size} 件あります（その日の右上に「+件数」を出しています）。`);
+      warns.push(`予定が多くて、日の枠に入りきらないものが ${hidden.size} 件あります。その日の右上に「+件数」を出しています。`);
     }
 
     const rowsTpl = `${dim.numH}px ${cap ? `repeat(${cap}, ${dim.laneH}px) ` : ''}1fr`;
@@ -848,13 +992,13 @@ function isWebKitUA(ua) {
   function renderTile(items, warns, shown) {
     const list = items.slice(0, TILE_MAX);
     if (items.length > TILE_MAX) {
-      warns.push(`タイルは ${TILE_MAX} 件までです。選択中の ${items.length} 件のうち、先頭 ${TILE_MAX} 件だけを載せています。`);
+      warns.push(`画像タイルにのせられるのは ${TILE_MAX} 件までです。上から ${TILE_MAX} 件をのせています。`);
     } else if (items.length && items.length < TILE_MIN) {
-      warns.push(`タイルは ${TILE_MIN}〜${TILE_MAX} 件で組む想定です（いまは ${items.length} 件）。`);
+      warns.push(`画像タイルは ${TILE_MIN}〜${TILE_MAX} 件えらぶと、きれいに並びます（いまは ${items.length} 件）。`);
     }
     list.forEach(it => shown.add(it.key));
     state.tileItems = list;
-    if (!list.length) return '<div class="s-empty">予定が選ばれていません</div>';
+    if (!list.length) return '<div class="s-empty">予定がまだ選ばれていません</div>';
     const lay = tileLayout(list.length, BODY_W, BODY_H, TILE_GAP);
     const w = Math.floor(lay.w);
     const h = Math.floor(lay.h);
@@ -866,10 +1010,16 @@ function isWebKitUA(ua) {
     return `<div class="t-grid ${size}">${tiles}</div>`;
   }
 
-  // 読み込めなかったタイル画像は DOM から外して種別色のブロックに置き換える
+  // 読み込めなかったタイル・リストの画像は DOM から外して種別色のブロックに置き換える
   // （img を残すと html-to-image が src="" を読んで書き出し全体が失敗する）
   function toFallback(img) {
     failedThumbs.add(img.getAttribute('src'));
+    const thumb = img.closest('.l-thumb');
+    if (thumb) {
+      thumb.classList.add('noimg');
+      thumb.innerHTML = listThumbFallback(thumb.dataset.type);
+      return;
+    }
     const tile = img.closest('.t-tile');
     if (!tile) { img.remove(); return; }
     const it = state.tileItems[Number(tile.dataset.i)];
@@ -918,12 +1068,12 @@ function isWebKitUA(ua) {
     let head = '';
     if (state.kind === 'calendar') {
       body = renderCalendar(items, warns, shown);
-      head = headHtml('対象月', `<b>${state.calYear}</b><span class="unit">年</span><b>${state.calMonth + 1}</b><span class="unit">月</span>`);
+      head = headHtml('この月の予定', `<b>${state.calYear}</b><span class="unit">年</span><b>${state.calMonth + 1}</b><span class="unit">月</span>`);
     } else {
       body = state.kind === 'tile' ? renderTile(items, warns, shown) : renderList(items, warns, shown);
-      head = headHtml('対象期間', periodValHtml(p.from, p.to));
+      head = headHtml('この期間の予定', periodValHtml(p.from, p.to));
     }
-    if (!items.length) warns.push('予定が選ばれていません。候補一覧でチェックしてください。');
+    if (!items.length) warns.push('予定がまだ選ばれていません。下の一覧から、のせたい予定にチェックを入れてください。');
 
     stage.innerHTML = head + `<div class="s-body">${body}</div>` + footHtml();
     sweepBrokenImages();
@@ -934,9 +1084,10 @@ function isWebKitUA(ua) {
       const c = state.cands[Number(el.dataset.i)];
       if (!c) return;
       const k = keyOf(c.row);
+      el.classList.toggle('on', isChecked(c.row));
       el.classList.toggle('off', isChecked(c.row) && !shown.has(k));
     });
-    $('candCount').textContent = `${state.cands.length} 件・選択 ${items.length} 件`;
+    $('candCount').textContent = `えらんだ予定：${items.length} 件（候補は ${state.cands.length} 件）`;
     $('monthLabel').textContent = `${state.calYear}年${state.calMonth + 1}月`;
   }
 
@@ -952,12 +1103,22 @@ function isWebKitUA(ua) {
   fitPreview();
 
   // ===== 操作 =====
+  // 画像の形を切り替える（カード型のボタンの見た目と、カレンダーの月送りの表示もそろえる）
+  function setKind(kind) {
+    state.kind = kind;
+    $('kindSeg').querySelectorAll('button[data-kind]').forEach(x => {
+      const on = x.dataset.kind === kind;
+      x.classList.toggle('on', on);
+      x.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    $('monthNav').hidden = kind !== 'calendar';
+  }
+  setKind(state.kind);   // URL の kind 指定を反映
+
   $('kindSeg').addEventListener('click', e => {
     const b = e.target.closest('button[data-kind]');
     if (!b) return;
-    state.kind = b.dataset.kind;
-    $('kindSeg').querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
-    $('monthNav').hidden = state.kind !== 'calendar';
+    setKind(b.dataset.kind);
     renderStage();
   });
 
@@ -974,11 +1135,11 @@ function isWebKitUA(ua) {
   if (EDIT) {
     const badge = document.createElement('p');
     badge.className = 'edit-badge';
-    badge.textContent = '編集モード：見出しとラベルを書き換えられます（保存はされません）';
+    badge.textContent = '編集モードです。画像の見出しと、予定ごとの文字を書きかえられます（保存はされません）。';
     document.querySelector('.lead').after(badge);
     const sec = document.createElement('section');
-    sec.className = 'sec';
-    sec.innerHTML = `<label class="sec-label" for="heading">見出し</label>
+    sec.className = 'step';
+    sec.innerHTML = `<h2 class="q"><label for="heading">画像の見出しは何にしますか？</label></h2>
       <input type="text" class="text" id="heading" value="${esc(state.heading)}">`;
     $('kindSec').after(sec);
     $('heading').addEventListener('input', e => {
@@ -1172,14 +1333,14 @@ function isWebKitUA(ua) {
 
   // 環境が対応しているボタンだけを置く
   $('actions').innerHTML = [
-    '<button type="button" class="btn" id="saveBtn">PNGを保存</button>',
+    '<button type="button" class="btn" id="saveBtn">画像を保存</button>',
     canCopy ? '<button type="button" class="btn" id="copyBtn">画像をコピー</button>' : '',
-    canShareFiles ? '<button type="button" class="btn primary" id="shareBtn">共有</button>' : ''
+    canShareFiles ? '<button type="button" class="btn primary" id="shareBtn">X などでシェア</button>' : ''
   ].join('');
 
   makeBtn.addEventListener('click', async () => {
     setBusy(true);
-    setStatus('画像をつくっています…');
+    setStatus('画像をつくっています。少しお待ちください…');
     try {
       const {opts, version: v} = await exportOptions();
       const tooLong = '時間がかかりすぎたので中断しました。もう一度お試しください';
@@ -1189,14 +1350,14 @@ function isWebKitUA(ua) {
       const blob = await withTimeout(window.htmlToImage.toBlob(stage, opts), 30000, tooLong);
       if (!blob) throw new Error('画像を作れませんでした');
       if (v !== state.version || stageTimer) {
-        setStatus('つくっている間に内容が変わったので、もう一度「画像をつくる」を押してください。', true);
+        setStatus('つくっている間に内容が変わりました。もう一度「画像をつくる」を押してください。', true);
         return;
       }
       showResult(blob);
-      setStatus(canShareFiles ? '画像ができました。共有・保存ができます。' : '画像ができました。保存してから X に添付してください。');
+      setStatus(canShareFiles ? '画像ができました。保存するか、X などでシェアしてください。' : '画像ができました。保存してから、X の投稿に添付してください。');
     } catch (err) {
       console.error(err);
-      setStatus(`画像をつくれませんでした: ${errText(err)}`, true);
+      setStatus(`画像をつくれませんでした。少し時間をおいて、もう一度お試しください。（くわしく：${errText(err)}）`, true);
     } finally {
       setBusy(false);
     }
@@ -1213,17 +1374,17 @@ function isWebKitUA(ua) {
     a.click();
     a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 60000);   // すぐ revoke すると Safari でダウンロードが始まらないことがある
-    setStatus(`保存しました（${state.result.name}）。保存されていないときは、下の画像を長押ししてください。`);
+    setStatus('画像を保存しました。見つからないときは、下の画像を長押しして保存してください。');
   });
 
   if (canCopy) {
     $('copyBtn').addEventListener('click', () => {
       if (!state.result) return;
       navigator.clipboard.write([new ClipboardItem({'image/png': state.result.blob})])
-        .then(() => setStatus('コピーしました。X の投稿欄に貼り付けできます。'))
+        .then(() => setStatus('画像をコピーしました。X の投稿画面に貼りつけられます。'))
         .catch(err => {
           console.error(err);
-          setStatus(`コピーできませんでした: ${errText(err)}`, true);
+          setStatus('コピーできませんでした。「画像を保存」をお使いください。', true);
         });
     });
   }
@@ -1232,7 +1393,7 @@ function isWebKitUA(ua) {
     $('shareBtn').addEventListener('click', () => {
       const file = state.result && state.result.file;
       if (!file || !navigator.canShare({files: [file]})) {
-        setStatus('この環境では画像を共有できません。保存してから X に添付してください。', true);
+        setStatus('この環境ではシェアできませんでした。画像を保存してから、X の投稿に添付してください。', true);
         return;
       }
       navigator.share({files: [file]})
@@ -1240,13 +1401,13 @@ function isWebKitUA(ua) {
         .catch(err => {
           if (err && err.name === 'AbortError') { setStatus(''); return; }   // 共有シートを閉じただけ
           console.error(err);
-          setStatus(`共有できませんでした: ${errText(err)}`, true);
+          setStatus(`シェアできませんでした。画像を保存してから、X の投稿に添付してください。（くわしく：${errText(err)}）`, true);
         });
     });
   }
 
   // ===== 起動 =====
-  if (!window.htmlToImage) setStatus('画像をつくる機能を読み込めませんでした。時間をおいて開き直してください。', true);
+  if (!window.htmlToImage) setStatus('画像をつくる機能を読み込めませんでした。少し時間をおいて、ページを開き直してください。', true);
 
   fetch('data.json', {cache: 'no-store'})
     .then(res => {
@@ -1262,7 +1423,7 @@ function isWebKitUA(ua) {
     })
     .catch(err => {
       console.error(err);
-      candsEl.innerHTML = '<p class="empty-note">予定のデータを読み込めませんでした。時間をおいて開き直してください。</p>';
+      candsEl.innerHTML = '<p class="empty-note">予定を読み込めませんでした。少し時間をおいて、ページを開き直してください。</p>';
       renderStage();
     });
 })();
