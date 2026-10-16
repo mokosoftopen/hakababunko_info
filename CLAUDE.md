@@ -56,7 +56,8 @@ This is a static HTML site with no build pipeline, package.json, or dependencies
    （`url` の `status/<数字>` 部分が投稿 ID）
 2. @hakababunko の X タイムラインを取得する。**リポストも含める**
    （他社の告知はリポスト経由で拾うため。リプライは除外）
-   - 転載ボット側の資格情報が `/Volumes/SSD2/github/hakababunko_mirror/.env` にある
+   - 転載ボット側の資格情報が `/Volumes/SSD/GitHub/hakaba-mirror-nab/secrets/.env` にある
+     （`X_BEARER_TOKEN` と `X_USER_ID`）
    - `GET /2/users/:id/tweets` に `expansions=referenced_tweets.id,referenced_tweets.id.author_id`
      を付けると、リポスト元の本文と投稿者が取れる
    - **必ず `since_id`（下記「前回の到達点」）を付ける。全期間の取り直しは禁止。**
@@ -77,7 +78,7 @@ This is a static HTML site with no build pipeline, package.json, or dependencies
 ### 前回の到達点（次回はここから差分を取る）
 
 ```
-since_id  2086418400579137609   # 2026-08-09T11:44:45Z
+since_id  2111021477734854761   # 2026-10-16T09:08:35Z
 ```
 
 更新するたびに、その回で取得した最新の投稿 ID をここに書き換えること。
