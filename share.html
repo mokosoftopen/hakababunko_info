@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>シェア画像をつくる｜墓場文庫 最新情報ポータル</title>
+<meta name="description" content="墓場文庫の最新情報ポータルから気になる予定を選んで、X でシェアできる画像をつくれます。">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="墓場文庫｜最新情報ポータル">
+<meta property="og:title" content="シェア画像をつくる｜墓場文庫 最新情報ポータル">
+<meta property="og:description" content="気になる予定を選んで、X でシェアできる画像をつくれます。">
+<meta property="og:url" content="https://info.hakaba-bunko.net/share.html">
+<meta property="og:image" content="https://info.hakaba-bunko.net/ogp.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="シェア画像をつくる｜墓場文庫 最新情報ポータル">
+<meta name="twitter:description" content="気になる予定を選んで、X でシェアできる画像をつくれます。">
+<meta name="twitter:image" content="https://info.hakaba-bunko.net/ogp.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;800&family=Zen+Kaku+Gothic+New:wght@500;700;900&display=swap" rel="stylesheet" crossorigin="anonymous">
+<style>
+  :root{
+    --frame:#bcd7e6;
+    --ink:#22394a;
+    --ink2:#4d6b7d;
+    --line:#dce8ef;
+    --accent:#2e7fae;
+    --today:#f5a623;
+    --today-bg:#fff8e8;
+    --sun:#d64545;
+    --sat:#2f7fc4;
+  }
+  .ty-goods{--c:#d98a00}
+  .ty-books{--c:#2f6fde}
+  .ty-events{--c:#15803d}
+  .ty-web{--c:#dc2626}
+  .ty-news{--c:#0f766e}
+  .ty-sale{--c:#c2410c}
+
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:var(--line);color:var(--ink);font-family:"Zen Kaku Gothic New",sans-serif;font-weight:500;font-size:14px;line-height:1.5}
+  button,input{font:inherit;color:inherit}
+
+  /* ===== 操作画面 ===== */
+  .app{display:flex;height:100vh}
+  .side{flex:none;width:440px;height:100%;overflow-y:auto;background:#fff;border-right:1px solid var(--line);padding:24px}
+  .main{flex:1;min-width:0;overflow:auto;padding:32px}
+  .back{display:inline-block;margin-bottom:12px;color:var(--accent);font-size:13px;font-weight:700;text-decoration:none}
+  .back:hover{text-decoration:underline}
+  .side h1{margin:0;font-size:20px;font-weight:900;letter-spacing:.04em}
+  .lead{margin:4px 0 0;color:var(--ink2);font-size:13px}
+  .edit-badge{display:inline-block;margin:8px 0 0;padding:4px 10px;border:1px solid var(--today);border-radius:4px;background:var(--today-bg);font-size:12px;font-weight:700}
+  .sec{margin-top:24px}
+  .sec-label{display:block;margin-bottom:8px;font-size:12px;font-weight:700;color:var(--ink2);letter-spacing:.08em}
+  .seg{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--accent);border-radius:8px;overflow:hidden}
+  .seg button{border:0;background:#fff;color:var(--accent);padding:8px 0;font-weight:700;cursor:pointer}
+  .seg button+button{border-left:1px solid var(--accent)}
+  .seg button.on{background:var(--accent);color:#fff}
+  .monthnav{display:flex;align-items:center;justify-content:space-between;margin-top:12px}
+  .monthnav[hidden]{display:none}
+  .monthnav span{font-weight:700;font-size:15px}
+  .sbtn{border:1px solid var(--line);background:#fff;border-radius:999px;padding:4px 12px;font-size:13px;font-weight:700;color:var(--accent);cursor:pointer}
+  .sbtn:hover{border-color:var(--accent)}
+  .text{width:100%;height:36px;border:1px solid var(--line);border-radius:8px;padding:0 12px;background:#fff}
+  .text:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px rgba(46,127,174,.2)}
+  .period{display:flex;align-items:center;gap:8px}
+  .period .text{flex:1;min-width:0}
+  .types{display:flex;flex-wrap:wrap;gap:8px}
+  .types label{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:4px 12px 4px 8px;font-size:13px;font-weight:700;cursor:pointer}
+  .types input{margin:0}
+  .types .dot{width:10px;height:10px;border-radius:3px;background:var(--c)}
+  .warn{background:var(--today-bg);border:1px solid var(--today);border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:13px}
+  .warn[hidden]{display:none}
+  .warn p{margin:0}
+  .warn p+p{margin-top:4px}
+  .actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;max-width:480px}
+  .btn{height:40px;border:1px solid var(--accent);border-radius:8px;background:#fff;color:var(--accent);font-weight:700;cursor:pointer}
+  .btn.make{min-width:240px;padding:0 24px}
+  .btn.primary{background:var(--accent);color:#fff}
+  .btn:disabled{opacity:.5;cursor:default}
+  .status{min-height:20px;margin:8px 0 0;font-size:13px;color:var(--accent)}
+  .status.err{color:#dc2626}
+  .note{margin:4px 0 0;font-size:12px;color:var(--ink2)}
+  .cands{border-top:1px solid var(--line)}
+  .cand{padding:8px 0;border-bottom:1px solid var(--line)}
+  .cand-pick{display:grid;grid-template-columns:20px 72px minmax(0,1fr);gap:10px;align-items:center;min-height:48px;cursor:pointer}
+  .cand-pick input{width:18px;height:18px;margin:0;accent-color:var(--accent)}
+  .cand-thumb{display:block;width:72px;height:40px;border-radius:4px;object-fit:cover;background:var(--line)}
+  .cand-thumb.noimg{display:flex;align-items:center;justify-content:center;background:var(--c);color:#fff;font-size:11px;font-weight:700}
+  .cand-meta{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;min-width:0}
+  .cand-date{font-family:"Outfit","Zen Kaku Gothic New",sans-serif;font-size:13px;font-weight:700}
+  .cand-off{display:none;font-size:11px;font-weight:700;color:#c2410c}
+  .cand.off .cand-off{display:inline}
+  .cand-title{flex-basis:100%;font-size:13px;font-weight:500;line-height:1.4;color:var(--ink);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .cand .text.cand-label{display:block;width:calc(100% - 30px);height:32px;margin:6px 0 0 30px;font-size:13px}
+  .empty-note{margin:0;padding:12px 0;color:var(--ink2);font-size:13px}
+  .preview{position:relative;width:100%;max-width:1200px;overflow:hidden;border-radius:4px;background:var(--frame);box-shadow:0 6px 24px rgba(34,57,74,.18)}
+  .scaler{width:1200px;height:675px;transform-origin:0 0}
+  .cap{margin:12px 0 0;font-size:12px;color:var(--ink2)}
+  .out{max-width:1200px;margin-top:24px}
+  .result{margin-top:16px}
+  .result[hidden]{display:none}
+  .result img{display:block;width:100%;height:auto;margin-top:12px;border-radius:4px;box-shadow:0 6px 24px rgba(34,57,74,.18)}
+  /* スマホ: 操作パネルをプレビューの上に積む。タップしやすい大きさにし、iOS の入力時ズームを避けて 16px にする */
+  @media (max-width:960px){
+    .app{flex-direction:column;height:auto}
+    .side{width:auto;height:auto;padding:16px;border-right:0;border-bottom:1px solid var(--line)}
+    .main{overflow:visible;padding:16px}
+    .seg button{padding:12px 0}
+    .sbtn{padding:8px 14px}
+    .text{height:44px;font-size:16px}
+    .period .text{-webkit-appearance:none;appearance:none}
+    .types label{padding:8px 14px 8px 10px}
+    .cands{max-height:60vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+    .cand-pick{grid-template-columns:24px 72px minmax(0,1fr);min-height:56px}
+    .cand-pick input{width:22px;height:22px}
+    .cand .text.cand-label{width:calc(100% - 34px);height:40px;margin-left:34px;font-size:16px}
+    .btn{height:48px}
+    .btn.make{width:100%;min-width:0}
+    .actions{max-width:none}
+  }
+
+  /* ===== 書き出し対象（1200×675） ===== */
+  .chip{display:inline-flex;align-items:center;justify-content:center;border-radius:4px;background:var(--c);color:#fff;font-weight:700;white-space:nowrap;letter-spacing:.04em}
+  .chip.sm{height:20px;padding:0 6px;font-size:11px}
+
+  .stage{width:1200px;height:675px;overflow:hidden;display:flex;flex-direction:column;padding:24px 32px 20px;background:#bcd7e6;color:#22394a;font-family:"Zen Kaku Gothic New",sans-serif;font-weight:500;line-height:1.4;-webkit-font-smoothing:antialiased}
+  .s-head{flex:none;height:48px;display:flex;align-items:center;gap:16px}
+  .s-logo{flex:none;height:32px;padding:0 9px 0 12px;border-radius:4px;background:#22394a;color:#fff;font-size:17px;font-weight:900;line-height:32px;letter-spacing:.16em}
+  .s-title{flex:1;min-width:0;font-size:30px;font-weight:900;line-height:48px;letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .s-period{flex:none;text-align:right;line-height:1.2}
+  .s-period-label{display:block;font-size:12px;font-weight:700;color:#4d6b7d;letter-spacing:.08em}
+  .s-period-val{display:block;margin-top:2px;font-size:22px;font-weight:700;white-space:nowrap}
+  .s-period-val .d-md,.s-period-val .yr,.s-period-val b{font-family:"Outfit",sans-serif;font-weight:700}
+  .s-period-val .yr{margin-right:8px;font-size:15px;color:#4d6b7d}
+  .s-period-val .d-dow{margin-left:1px;font-size:13px;color:#4d6b7d}
+  .s-period-val .d-sep{margin:0 6px;font-size:16px;color:#4d6b7d}
+  .s-period-val .unit{margin:0 2px;font-size:15px;color:#4d6b7d}
+  .s-body{flex:1;min-height:0;margin-top:16px}
+  .s-foot{flex:none;height:20px;margin-top:12px;display:flex;align-items:center;justify-content:space-between;color:#4d6b7d;font-size:13px;font-weight:700;letter-spacing:.04em}
+  .s-url{font-family:"Outfit",sans-serif;font-size:15px;font-weight:700;color:#2e7fae;letter-spacing:.02em}
+  .s-empty{height:100%;display:flex;align-items:center;justify-content:center;border-radius:14px;background:#fff;color:#4d6b7d;font-size:20px;font-weight:700}
+
+  /* リスト */
+  .l-panel{height:100%;display:flex;flex-direction:column;justify-content:center;padding:8px 32px;border-radius:14px;background:#fff}
+  .l-row{display:grid;align-items:center;column-gap:24px;min-height:0;border-top:1px solid #dce8ef}
+  .l-row:first-child{border-top:0}
+  .l-date{white-space:nowrap;line-height:1;color:#22394a}
+  .l-date .d-md{font-family:"Outfit",sans-serif;font-weight:800;letter-spacing:.01em}
+  .l-date .d-dow{margin-left:2px;font-weight:700;color:#4d6b7d}
+  .l-date .d-sun{color:#d64545}
+  .l-date .d-sat{color:#2f7fc4}
+  .l-date .d-sep{margin:0 8px;color:#4d6b7d}
+  .l-label{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;overflow-wrap:anywhere;font-weight:700;line-height:1.4}
+  .l-md .l-row{grid-template-columns:268px 96px minmax(0,1fr)}
+  .l-md .d-md{font-size:30px}
+  .l-md .d-dow{font-size:15px}
+  .l-md .d-sep{font-size:18px}
+  .l-md .chip{height:28px;min-width:84px;padding:0 10px;font-size:14px}
+  .l-md .l-label{font-size:22px}
+  .l-lg .l-row{grid-template-columns:340px 112px minmax(0,1fr)}
+  .l-lg .d-md{font-size:40px}
+  .l-lg .d-dow{font-size:19px}
+  .l-lg .d-sep{font-size:24px}
+  .l-lg .chip{height:34px;min-width:96px;padding:0 12px;font-size:16px}
+  .l-lg .l-label{font-size:28px}
+
+  /* カレンダー */
+  .c-panel{height:100%;display:flex;flex-direction:column;padding:12px;border-radius:14px;background:#fff}
+  .c-wk{flex:none;height:28px;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));align-items:center;border-radius:8px;background:#1e1e1e;color:#fff;font-size:13px;font-weight:700;text-align:center;letter-spacing:.12em}
+  .c-weeks{flex:1;min-height:0;margin-top:6px;display:grid;row-gap:4px}
+  .c-week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));column-gap:4px;min-height:0;overflow:hidden}
+  .c-cell{grid-row:1/-1;border:1px solid #dce8ef;border-radius:8px;background:#fff}
+  .c-cell.out{border-color:transparent}
+  .c-cell.today{border:2px solid #f5a623;background:#fff8e8}
+  .c-num{grid-row:1;align-self:center;justify-self:start;padding-left:8px;font-family:"Outfit",sans-serif;font-size:14px;font-weight:700;line-height:1;color:#22394a}
+  .c-num.sun{color:#d64545}
+  .c-num.sat{color:#2f7fc4}
+  .c-num.out{opacity:.35}
+  .c-more{grid-row:1;align-self:center;justify-self:end;padding-right:6px;font-family:"Outfit",sans-serif;font-size:12px;font-weight:700;line-height:1;color:#2e7fae}
+  .c-bar{min-width:0;margin:0 4px;padding:0 6px;border-radius:4px;background:var(--c);color:#fff;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .c-bar.cp{margin-left:0;border-top-left-radius:0;border-bottom-left-radius:0}
+  .c-bar.cn{margin-right:0;border-top-right-radius:0;border-bottom-right-radius:0}
+  .c-chip{min-width:0;margin:0 4px;padding:0 5px 0 4px;display:flex;align-items:center;gap:4px;border:1px solid var(--c);border-radius:4px;background:#fff;color:#22394a;font-weight:700;white-space:nowrap;overflow:hidden}
+  .c-chip .dot{flex:none;width:7px;height:7px;border-radius:2px;background:var(--c)}
+  .c-chip .mark{flex:none;padding:0 3px;border-radius:3px;background:var(--c);color:#fff;font-weight:900}
+  .c-chip .txt{min-width:0;overflow:hidden;text-overflow:ellipsis}
+  .c-normal .c-bar{font-size:12px;line-height:17px}
+  .c-normal .c-chip{font-size:12px;line-height:15px}
+  .c-normal .c-chip .mark{font-size:11px;line-height:13px}
+  .c-dense .c-num{font-size:13px}
+  .c-dense .c-bar{font-size:11px;line-height:15px}
+  .c-dense .c-chip{font-size:11px;line-height:13px}
+  .c-dense .c-chip .mark{font-size:10px;line-height:12px}
+
+  /* タイル */
+  .t-grid{height:100%;display:flex;flex-wrap:wrap;justify-content:center;align-content:flex-start;gap:12px}
+  .t-tile{position:relative;flex:none;overflow:hidden;border-radius:14px;background:var(--c)}
+  .t-tile img{position:absolute;left:0;top:0;display:block;width:100%;height:100%;object-fit:cover}
+  .t-over{position:absolute;left:0;right:0;bottom:0;color:#fff;background:linear-gradient(to top,rgba(18,30,40,.92) 0%,rgba(18,30,40,.7) 55%,rgba(18,30,40,0) 100%)}
+  .t-meta{display:flex;align-items:center;gap:10px}
+  .t-date{white-space:nowrap;font-weight:700;line-height:1}
+  .t-date .d-md{font-family:"Outfit",sans-serif}
+  .t-date .d-dow{margin-left:1px}
+  .t-date .d-sep{margin:0 4px}
+  .t-label{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;overflow-wrap:anywhere;font-weight:700;line-height:1.35}
+  .t-tile.noimg{display:flex;flex-direction:column;color:#fff}
+  .t-fb-type{font-weight:700;letter-spacing:.12em}
+  .t-fb-label{flex:1;min-height:0;display:flex;align-items:center}
+  .t-fb-label span{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden;overflow-wrap:anywhere;font-weight:900;line-height:1.35}
+  .t-fb-date{white-space:nowrap;font-weight:700;line-height:1}
+  .t-fb-date .d-md{font-family:"Outfit",sans-serif}
+  .t-fb-date .d-sep{margin:0 4px}
+  .t-l .t-over{padding:56px 24px 20px}
+  .t-l .chip{height:26px;padding:0 10px;font-size:14px}
+  .t-l .t-date,.t-l .t-fb-date{font-size:22px}
+  .t-l .d-dow{font-size:14px}
+  .t-l .d-sep{font-size:16px}
+  .t-l .t-label{margin-top:10px;font-size:22px}
+  .t-l .t-tile.noimg{padding:24px}
+  .t-l .t-fb-type{font-size:16px}
+  .t-l .t-fb-label span{font-size:34px}
+  .t-m .t-over{padding:44px 18px 16px}
+  .t-m .chip{height:24px;padding:0 8px;font-size:13px}
+  .t-m .t-date,.t-m .t-fb-date{font-size:18px}
+  .t-m .d-dow{font-size:12px}
+  .t-m .d-sep{font-size:14px}
+  .t-m .t-label{margin-top:8px;font-size:18px}
+  .t-m .t-tile.noimg{padding:18px}
+  .t-m .t-fb-type{font-size:14px}
+  .t-m .t-fb-label span{font-size:26px}
+  .t-s .t-over{padding:36px 14px 12px}
+  .t-s .chip{height:22px;padding:0 7px;font-size:12px}
+  .t-s .t-date,.t-s .t-fb-date{font-size:16px}
+  .t-s .d-dow{font-size:11px}
+  .t-s .d-sep{font-size:12px}
+  .t-s .t-label{margin-top:6px;font-size:16px}
+  .t-s .t-tile.noimg{padding:14px}
+  .t-s .t-fb-type{font-size:13px}
+  .t-s .t-fb-label span{font-size:21px}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <a class="back" href="./">← 最新情報ポータルへ戻る</a>
+    <h1>シェア画像をつくる</h1>
+    <p class="lead">気になる予定を選んで、X でシェアできる画像をつくれます。</p>
+
+    <section class="sec" id="kindSec">
+      <span class="sec-label">型</span>
+      <div class="seg" id="kindSeg">
+        <button type="button" data-kind="list" class="on">リスト</button>
+        <button type="button" data-kind="calendar">カレンダー</button>
+        <button type="button" data-kind="tile">タイル</button>
+      </div>
+      <div class="monthnav" id="monthNav" hidden>
+        <button type="button" class="sbtn" id="prevMonth">← 前月</button>
+        <span id="monthLabel"></span>
+        <button type="button" class="sbtn" id="nextMonth">翌月 →</button>
+      </div>
+    </section>
+
+    <section class="sec">
+      <span class="sec-label">期間</span>
+      <div class="period">
+        <input type="date" class="text" id="fromDate" aria-label="開始日">
+        <span>〜</span>
+        <input type="date" class="text" id="toDate" aria-label="終了日">
+      </div>
+    </section>
+
+    <section class="sec">
+      <span class="sec-label">種別</span>
+      <div class="types" id="typeFilter"></div>
+    </section>
+
+    <section class="sec">
+      <span class="sec-label">候補 <span id="candCount"></span></span>
+      <div class="warn" id="warn" hidden></div>
+      <div class="cands" id="cands"><p class="empty-note">読み込み中…</p></div>
+    </section>
+  </aside>
+
+  <main class="main">
+    <div class="preview" id="preview">
+      <div class="scaler" id="scaler">
+        <div class="stage" id="stage"></div>
+      </div>
+    </div>
+    <p class="cap">プレビュー（画像は 2400×1350 の PNG になります）</p>
+
+    <section class="out">
+      <button type="button" class="btn primary make" id="makeBtn">画像をつくる</button>
+      <p class="status" id="status"></p>
+      <div class="result" id="result" hidden>
+        <div class="actions" id="actions"></div>
+        <img id="resultImg" alt="できあがった画像">
+        <p class="note">うまく保存できないときは、画像を長押しして保存してください。</p>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
+<script>
+// ---- pure:start ----
+// ここから pure:end までは DOM に触らない関数だけを置く（Node のテストでこの区間を評価する）
+const TYPE_ORDER = ['goods', 'books', 'events', 'web', 'news', 'sale'];
+const TYPE_LABELS = {goods:'グッズ', books:'書籍', events:'イベント', web:'Web記事', news:'お知らせ', sale:'セール'};
+const DOW = ['日', '月', '火', '水', '木', '金', '土'];
+
+// "2026/1/16" "2026/01/14 12:15:16" "2026-01-22" を、その日の 0 時の Date にする（new Date(文字列) には頼らない）
+function parseYMD(s) {
+  if (!s) return null;
+  const p = String(s).trim().split(/\s+/)[0].split(/[\/-]/).map(Number);
+  if (p.length < 3 || p.some(n => !Number.isFinite(n))) return null;
+  const d = new Date(p[0], p[1] - 1, p[2]);
+  return d.getMonth() === p[1] - 1 ? d : null;
+}
+
+// 日付の通し番号（比較・日数計算用。夏時間の影響を受けない）
+function dayNum(d) {
+  return Math.round(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000);
+}
+
+function addDays(d, n) {
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
+}
+
+function pad2(n) {
+  return String(n).padStart(2, '0');
+}
+
+function toInputValue(d) {
+  return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+}
+
+function ymdCompact(d) {
+  return `${d.getFullYear()}${pad2(d.getMonth() + 1)}${pad2(d.getDate())}`;
+}
+
+// 行の期間。kind: range=2日以上 / single=単日（開始日だけも含む） / deadline=終了日だけ / none=日付なし
+function rowRange(row) {
+  const s = parseYMD(row.start_date);
+  const e = parseYMD(row.end_date);
+  if (s && e) {
+    const [a, b] = dayNum(s) <= dayNum(e) ? [s, e] : [e, s];
+    return {start: a, end: b, kind: dayNum(a) === dayNum(b) ? 'single' : 'range'};
+  }
+  if (s) return {start: s, end: s, kind: 'single'};
+  if (e) return {start: e, end: e, kind: 'deadline'};
+  return {start: null, end: null, kind: 'none'};
+}
+
+function overlapsPeriod(range, from, to) {
+  if (!range.start) return false;
+  return dayNum(range.start) <= dayNum(to) && dayNum(range.end) >= dayNum(from);
+}
+
+// 初期選択: 公開 かつ start_date が期間内に始まる行だけ（前から続いている開催中の行は手で選ぶ）
+function isDefaultSelected(row, today, from, to) {
+  if (row.status !== '公開') return false;
+  const s = parseYMD(row.start_date);
+  if (!s) return false;
+  return dayNum(s) >= dayNum(from) && dayNum(s) <= dayNum(to);
+}
+
+// 候補一覧: 公開・種別が一致・期間に重なる行を、start_date 昇順（なければ end_date）で並べる
+function buildCandidates(data, opts) {
+  const types = opts.types instanceof Set ? opts.types : new Set(opts.types);
+  const sortKey = r => {
+    const d = parseYMD(r.start_date) || parseYMD(r.end_date);
+    return d ? dayNum(d) : Infinity;
+  };
+  return data
+    .filter(r => r.status === '公開' && types.has(r.type))
+    .map(r => ({row: r, range: rowRange(r)}))
+    .filter(c => overlapsPeriod(c.range, opts.from, opts.to))
+    .sort((a, b) =>
+      (sortKey(a.row) - sortKey(b.row)) ||
+      (dayNum(a.range.end) - dayNum(b.range.end)) ||
+      String(a.row.date || '').localeCompare(String(b.row.date || '')));
+}
+
+function authorFromUrl(url) {
+  const m = String(url || '').match(/^https?:\/\/(?:www\.)?(?:x|twitter)\.com\/([^\/?#]+)/i);
+  return m ? m[1] : '';
+}
+
+function defaultLabel(row) {
+  const t = String(row.title || '').trim();
+  if (t) return t;
+  const a = authorFromUrl(row.url);
+  return a ? `@${a} の投稿` : (TYPE_LABELS[row.type] || '');
+}
+
+// サムネイル URL の正規化（pbs.twimg.com は medium サイズに寄せる）
+function normalizeThumb(url, size) {
+  const name = size || 'medium';
+  if (!url) return '';
+  let u;
+  try { u = new URL(String(url).trim()); } catch (e) { return ''; }
+  // https のページから http の画像は html-to-image の fetch が mixed content で止まるため https にそろえる
+  if (u.protocol === 'http:') u.protocol = 'https:';
+  if (u.hostname !== 'pbs.twimg.com') return u.href;
+  const m = u.pathname.match(/^(.*)\.(jpe?g|png|webp|gif)$/i);
+  if (m) {
+    const ext = m[2].toLowerCase();
+    u.pathname = m[1];
+    u.search = '';
+    u.searchParams.set('format', ext === 'jpeg' ? 'jpg' : ext);
+    u.searchParams.set('name', name);
+    return u.href;
+  }
+  if (u.searchParams.has('format')) {
+    const cur = u.searchParams.get('name');
+    if (!cur || /^(small|thumb|tiny|medium)$/.test(cur)) u.searchParams.set('name', name);
+  }
+  return u.href;
+}
+
+// 日付の表示部品。refYear と年が違う日だけ年を付ける（refYear が null なら年は付けない）
+function dateTokens(range, refYear) {
+  if (!range || !range.start) return [];
+  const md = d => ({t: 'md', v: (refYear != null && d.getFullYear() !== refYear ? d.getFullYear() + '/' : '') + (d.getMonth() + 1) + '/' + d.getDate()});
+  const dw = d => ({t: 'dow', v: '(' + DOW[d.getDay()] + ')', day: d.getDay()});
+  const sep = {t: 'sep', v: '〜'};
+  if (range.kind === 'deadline') return [sep, md(range.end), dw(range.end)];
+  if (range.kind === 'range') return [md(range.start), dw(range.start), sep, md(range.end), dw(range.end)];
+  return [md(range.start), dw(range.start)];
+}
+
+function formatRange(range, refYear) {
+  return dateTokens(range, refYear).map(t => t.v).join('');
+}
+
+// 月グリッド（日曜始まり）。month は 0 始まり
+function monthGrid(year, month) {
+  const first = new Date(year, month, 1);
+  const days = new Date(year, month + 1, 0).getDate();
+  return {
+    first,
+    last: new Date(year, month, days),
+    gridStart: addDays(first, -first.getDay()),
+    days,
+    weeks: Math.ceil((first.getDay() + days) / 7)
+  };
+}
+
+// 選んだ予定を月グリッドの週ごとの区間に分ける。期間は表示月の内側に切り詰め、週をまたいだら分割する
+// items: [{range}] / 戻り値の segments[].idx は items の添字
+function calendarSegments(items, year, month) {
+  const grid = monthGrid(year, month);
+  const ms = dayNum(grid.first);
+  const me = dayNum(grid.last);
+  const gs = dayNum(grid.gridStart);
+  const segments = [];
+  const outside = [];
+  items.forEach((it, idx) => {
+    const r = it.range;
+    if (!r || !r.start) { outside.push(idx); return; }
+    const s = dayNum(r.start);
+    const e = dayNum(r.end);
+    if (e < ms || s > me) { outside.push(idx); return; }
+    if (r.kind !== 'range') {
+      segments.push({idx, kind: r.kind, week: Math.floor((s - gs) / 7), col: (s - gs) % 7, span: 1, contPrev: false, contNext: false});
+      return;
+    }
+    const cs = Math.max(s, ms);
+    const ce = Math.min(e, me);
+    for (let d = cs; d <= ce;) {
+      const week = Math.floor((d - gs) / 7);
+      const segEnd = Math.min(ce, gs + week * 7 + 6);
+      segments.push({idx, kind: 'range', week, col: (d - gs) % 7, span: segEnd - d + 1, contPrev: d > s, contNext: segEnd < e});
+      d = segEnd + 1;
+    }
+  });
+  return {grid, segments, outside};
+}
+
+// 週ごとにレーン（段）を割り当てる。期間バーを先に、開始の早い順・長い順で、空いている一番上の段へ
+function assignLanes(segments) {
+  const byWeek = new Map();
+  segments.forEach(s => {
+    if (!byWeek.has(s.week)) byWeek.set(s.week, []);
+    byWeek.get(s.week).push(s);
+  });
+  byWeek.forEach(list => {
+    list.sort((a, b) =>
+      ((a.kind === 'range' ? 0 : 1) - (b.kind === 'range' ? 0 : 1)) ||
+      (a.col - b.col) || (b.span - a.span) || (a.idx - b.idx));
+    const lanes = [];
+    list.forEach(s => {
+      const end = s.col + s.span - 1;
+      let li = 0;
+      while (lanes[li] && lanes[li].some(([c1, c2]) => s.col <= c2 && end >= c1)) li++;
+      (lanes[li] = lanes[li] || []).push([s.col, end]);
+      s.lane = li;
+    });
+  });
+  return segments;
+}
+
+// 1 週の高さに入る段数
+function laneCapacity(rowH, dim) {
+  return Math.max(0, Math.floor((rowH - dim.numH - dim.gap - dim.padB) / (dim.laneH + dim.gap)));
+}
+
+// 段からあふれた区間を数える。more: "週-列" → 件数 / hidden: あふれた区間を持つ items の添字
+function overflowInfo(segments, cap) {
+  const more = {};
+  const hidden = new Set();
+  segments.forEach(s => {
+    if (s.lane < cap) return;
+    hidden.add(s.idx);
+    for (let c = s.col; c < s.col + s.span; c++) {
+      const k = s.week + '-' + c;
+      more[k] = (more[k] || 0) + 1;
+    }
+  });
+  return {more, hidden};
+}
+
+// タイルの並び。空の行を作らない列×行の中から、1枚の縦横比が 1.6 に近く空きの少ないものを選ぶ
+function tileLayout(n, W, H, gap) {
+  if (n <= 0) return {cols: 1, rows: 1, w: W, h: H};
+  let best = null;
+  for (let rows = 1; rows <= n; rows++) {
+    const cols = Math.ceil(n / rows);
+    if (cols * (rows - 1) >= n) continue;
+    const w = (W - gap * (cols - 1)) / cols;
+    const h = (H - gap * (rows - 1)) / rows;
+    const score = Math.abs(Math.log((w / h) / 1.6)) + 0.25 * (cols * rows - n);
+    if (!best || score < best.score) best = {cols, rows, w, h, score};
+  }
+  return best;
+}
+
+// ---- 書き出し用フォント（画像に出てくる文字だけを Google Fonts の text= で取り寄せる） ----
+const FONT_CSS_BASE = 'https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;800&family=Zen+Kaku+Gothic+New:wght@500;700;900';
+
+// 画像内の文字を重複なしで並べる（改行・タブは除く。省略記号「…」は text-overflow で描かれるので必ず入れる）
+function fontChars(text) {
+  const set = new Set(Array.from(String(text == null ? '' : text) + '…'));
+  ['\n', '\r', '\t'].forEach(c => set.delete(c));
+  return Array.from(set).sort().join('');
+}
+
+function fontCssUrl(chars) {
+  return `${FONT_CSS_BASE}&text=${encodeURIComponent(chars)}&display=swap`;
+}
+
+const CSS_URL_RE = /url\(\s*(['"]?)([^'")]+)\1\s*\)/g;
+
+// CSS の url(...) を重複なしで取り出す（data: は除く）
+function cssUrls(css) {
+  const out = [];
+  String(css).replace(CSS_URL_RE, (m, q, u) => {
+    if (!/^data:/i.test(u) && !out.includes(u)) out.push(u);
+    return m;
+  });
+  return out;
+}
+
+// CSS の url(...) を map（URL → data URL）で置き換える。map にない URL はそのまま
+function replaceCssUrls(css, map) {
+  return String(css).replace(CSS_URL_RE, (m, q, u) => (Object.prototype.hasOwnProperty.call(map, u) ? `url(${map[u]})` : m));
+}
+
+// WebKit（iPhone/iPad の全ブラウザ、または Chrome 系でない AppleWebKit）か
+function isWebKitUA(ua) {
+  const s = String(ua || '');
+  return /iPhone|iPad|iPod/.test(s) || (/AppleWebKit/.test(s) && !/Chrome\/|Chromium|Edg\//.test(s));
+}
+// ---- pure:end ----
+
+(function () {
+  'use strict';
+
+  // 書き出し画像の寸法（CSS の .stage / .c-panel と対応）
+  const BODY_W = 1136;            // 1200 - 左右余白 32×2
+  const BODY_H = 535;             // 675 - 上下余白 24+20 - 見出し 48+16 - フッター 20+12
+  const TILE_GAP = 12;
+  const CAL_WEEKS_H = 477;        // BODY_H - パネル余白 12×2 - 曜日帯 28 - 6
+  const CAL_WEEK_GAP = 4;
+  const CAL_DIM = {
+    normal: {numH: 22, laneH: 17, gap: 3, padB: 3},
+    dense:  {numH: 19, laneH: 15, gap: 2, padB: 3}   // 6 週の月
+  };
+  const LIST_MAX = 6;
+  const TILE_MIN = 4;
+  const TILE_MAX = 8;
+
+  // ?edit=1 のときだけ見出しとラベルの編集欄を出す（鍵ではない。公式風の文言を手軽に作れないようにするため）
+  const EDIT = new URLSearchParams(location.search).get('edit') === '1';
+  // WebKit は html-to-image の初回描画で画像やフォントが乗らないことがあるので、本番の前に空打ちする
+  const IS_WEBKIT = isWebKitUA(navigator.userAgent);
+  const WEBKIT_WARMUP = 2;
+  const canCopy = !!(window.ClipboardItem && navigator.clipboard && navigator.clipboard.write);
+  const canShareFiles = (() => {
+    try {
+      const f = new File([new Blob(['x'], {type: 'image/png'})], 'check.png', {type: 'image/png'});
+      return !!(navigator.share && navigator.canShare && navigator.canShare({files: [f]}));
+    } catch (e) {
+      return false;
+    }
+  })();
+
+  const $ = id => document.getElementById(id);
+  const stage = $('stage');
+  const candsEl = $('cands');
+  const makeBtn = $('makeBtn');
+  const resultEl = $('result');
+  const resultImg = $('resultImg');
+  const statusEl = $('status');
+
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
+
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+  const state = {
+    data: [],
+    kind: 'list',
+    heading: 'これからの予定',
+    from: today,
+    to: addDays(today, 30),
+    types: new Set(TYPE_ORDER),
+    checked: new Map(),   // 手で触った行だけ（key → bool）。触っていない行は初期選択の規則に従う
+    labels: new Map(),    // 編集したラベル（key → 文字列）。保存はしない
+    cands: [],
+    calYear: today.getFullYear(),
+    calMonth: today.getMonth(),
+    tileItems: [],
+    version: 0,           // renderStage のたびに増える。できあがった画像が今の内容と合っているかの判定に使う
+    result: null          // できあがった画像 {blob, file, name, url}
+  };
+  const failedThumbs = new Set();
+
+  const keyOf = row => row._i;
+
+  function period() {
+    return dayNum(state.from) <= dayNum(state.to)
+      ? {from: state.from, to: state.to}
+      : {from: state.to, to: state.from};
+  }
+
+  function isChecked(row) {
+    const k = keyOf(row);
+    if (state.checked.has(k)) return state.checked.get(k);
+    const p = period();
+    return isDefaultSelected(row, today, p.from, p.to);
+  }
+
+  function labelOf(row) {
+    const k = keyOf(row);
+    return EDIT && state.labels.has(k) ? state.labels.get(k) : defaultLabel(row);
+  }
+
+  function tokensHtml(tokens) {
+    return tokens.map(t => {
+      if (t.t === 'md') return `<span class="d-md">${esc(t.v)}</span>`;
+      if (t.t === 'dow') return `<span class="d-dow${t.day === 0 ? ' d-sun' : t.day === 6 ? ' d-sat' : ''}">${esc(t.v)}</span>`;
+      return `<span class="d-sep">${esc(t.v)}</span>`;
+    }).join('');
+  }
+
+  function typeLabel(type) {
+    return TYPE_LABELS[type] || type || '';
+  }
+
+  // ===== 候補一覧 =====
+  function renderCandidates() {
+    const p = period();
+    state.cands = buildCandidates(state.data, {from: p.from, to: p.to, types: state.types});
+    const refYear = p.from.getFullYear();
+    if (!state.cands.length) {
+      candsEl.innerHTML = '<p class="empty-note">この期間・種別に当てはまる予定はありません。</p>';
+      return;
+    }
+    candsEl.innerHTML = state.cands.map((c, i) => {
+      const r = c.row;
+      const thumb = normalizeThumb(r.thumbnail, 'small');
+      const thumbHtml = thumb && !failedThumbs.has(thumb)
+        ? `<img class="cand-thumb" loading="lazy" crossorigin="anonymous" src="${esc(thumb)}" alt="">`
+        : `<span class="cand-thumb noimg">${esc(typeLabel(r.type))}</span>`;
+      return `<div class="cand ty-${esc(r.type)}" data-i="${i}">
+        <label class="cand-pick">
+          <input type="checkbox"${isChecked(r) ? ' checked' : ''}>
+          ${thumbHtml}
+          <span class="cand-meta">
+            <span class="cand-date">${esc(formatRange(c.range, refYear))}</span>
+            <span class="chip sm">${esc(typeLabel(r.type))}</span>
+            <span class="cand-off">画像に入っていません</span>
+            ${EDIT ? '' : `<span class="cand-title">${esc(labelOf(r))}</span>`}
+          </span>
+        </label>
+        ${EDIT ? `<input type="text" class="text cand-label" value="${esc(labelOf(r))}" aria-label="画像に使うラベル">` : ''}
+      </div>`;
+    }).join('');
+  }
+
+  candsEl.addEventListener('change', e => {
+    if (e.target.type !== 'checkbox') return;
+    const c = state.cands[Number(e.target.closest('.cand').dataset.i)];
+    if (!c) return;
+    state.checked.set(keyOf(c.row), e.target.checked);
+    renderStage();
+  });
+
+  let stageTimer = 0;
+  function renderStageSoon() {
+    // 反映を待つ 150ms の間も、前にできた画像は内容が古いので使わせない
+    state.version++;
+    if (state.result) {
+      clearResult();
+      setStatus('');
+    }
+    clearTimeout(stageTimer);
+    stageTimer = setTimeout(renderStage, 150);
+  }
+
+  candsEl.addEventListener('input', e => {
+    if (!e.target.classList.contains('cand-label')) return;
+    const c = state.cands[Number(e.target.closest('.cand').dataset.i)];
+    if (!c) return;
+    state.labels.set(keyOf(c.row), e.target.value);
+    renderStageSoon();
+  });
+
+  // 一覧の小さいサムネイルが読めなければ種別色のブロックにする（error はバブリングしないので capture で拾う）
+  candsEl.addEventListener('error', e => {
+    const img = e.target;
+    if (!(img instanceof HTMLImageElement)) return;
+    failedThumbs.add(img.getAttribute('src'));
+    const span = document.createElement('span');
+    span.className = 'cand-thumb noimg';
+    const c = state.cands[Number(img.closest('.cand').dataset.i)];
+    span.textContent = c ? typeLabel(c.row.type) : '';
+    img.replaceWith(span);
+  }, true);
+
+  // ===== 画像（ステージ） =====
+  function headHtml(periodLabel, periodVal) {
+    return `<div class="s-head">
+      <div class="s-logo">墓場文庫</div>
+      <div class="s-title">${esc(state.heading)}</div>
+      <div class="s-period"><span class="s-period-label">${periodLabel}</span><span class="s-period-val">${periodVal}</span></div>
+    </div>`;
+  }
+
+  function footHtml() {
+    return `<div class="s-foot"><span>墓場文庫｜最新情報ポータル</span><span class="s-url">info.hakaba-bunko.net</span></div>`;
+  }
+
+  function periodValHtml(from, to) {
+    const y = from.getFullYear();
+    const range = dayNum(from) === dayNum(to) ? {start: from, end: from, kind: 'single'} : {start: from, end: to, kind: 'range'};
+    return `<span class="yr">${y}</span>${tokensHtml(dateTokens(range, y))}`;
+  }
+
+  function renderList(items, warns, shown) {
+    const list = items.slice(0, LIST_MAX);
+    if (items.length > LIST_MAX) {
+      warns.push(`リストは ${LIST_MAX} 件までです。選択中の ${items.length} 件のうち、先頭 ${LIST_MAX} 件だけを載せています。`);
+    }
+    list.forEach(it => shown.add(it.key));
+    if (!list.length) return '<div class="s-empty">予定が選ばれていません</div>';
+    const large = list.length <= 3;
+    const rowH = Math.floor(Math.min(large ? 150 : 129, (BODY_H - 16) / list.length));
+    const rows = list.map(it => `<div class="l-row" style="height:${rowH}px">
+        <div class="l-date">${tokensHtml(dateTokens(it.range, null))}</div>
+        <div><span class="chip ty-${esc(it.type)}">${esc(typeLabel(it.type))}</span></div>
+        <div class="l-label">${esc(it.label)}</div>
+      </div>`).join('');
+    return `<div class="l-panel ${large ? 'l-lg' : 'l-md'}">${rows}</div>`;
+  }
+
+  function renderCalendar(items, warns, shown) {
+    const y = state.calYear;
+    const m = state.calMonth;
+    const {grid, segments, outside} = calendarSegments(items, y, m);
+    assignLanes(segments);
+    const dense = grid.weeks >= 6;
+    const dim = dense ? CAL_DIM.dense : CAL_DIM.normal;
+    const rowH = (CAL_WEEKS_H - CAL_WEEK_GAP * (grid.weeks - 1)) / grid.weeks;
+    const cap = laneCapacity(rowH, dim);
+    const {more, hidden} = overflowInfo(segments, cap);
+
+    items.forEach((it, idx) => {
+      if (!outside.includes(idx) && !hidden.has(idx)) shown.add(it.key);
+    });
+    if (outside.length) {
+      warns.push(`カレンダーは 1 か月分です。表示中の ${m + 1} 月に重ならない ${outside.length} 件は載っていません。`);
+    }
+    if (hidden.size) {
+      warns.push(`枠に入りきらない予定が ${hidden.size} 件あります（その日の右上に「+件数」を出しています）。`);
+    }
+
+    const rowsTpl = `${dim.numH}px ${cap ? `repeat(${cap}, ${dim.laneH}px) ` : ''}1fr`;
+    const todayN = dayNum(today);
+    let weeksHtml = '';
+    for (let w = 0; w < grid.weeks; w++) {
+      let cells = '';
+      let nums = '';
+      for (let c = 0; c < 7; c++) {
+        const d = addDays(grid.gridStart, w * 7 + c);
+        const out = d.getMonth() !== m;
+        const isToday = !out && dayNum(d) === todayN;
+        cells += `<div class="c-cell${out ? ' out' : ''}${isToday ? ' today' : ''}" style="grid-column:${c + 1}"></div>`;
+        nums += `<div class="c-num${c === 0 ? ' sun' : c === 6 ? ' sat' : ''}${out ? ' out' : ''}" style="grid-column:${c + 1}">${d.getDate()}</div>`;
+        const n = more[w + '-' + c];
+        if (n) nums += `<div class="c-more" style="grid-column:${c + 1}">+${n}</div>`;
+      }
+      const segs = segments.filter(s => s.week === w && s.lane < cap).map(s => {
+        const it = items[s.idx];
+        const pos = `grid-column:${s.col + 1} / span ${s.span};grid-row:${s.lane + 2}`;
+        if (s.kind === 'range') {
+          return `<div class="c-bar ty-${esc(it.type)}${s.contPrev ? ' cp' : ''}${s.contNext ? ' cn' : ''}" style="${pos}">${esc(it.label)}</div>`;
+        }
+        const head = s.kind === 'deadline' ? '<span class="mark">〆</span>' : '<span class="dot"></span>';
+        return `<div class="c-chip ty-${esc(it.type)}" style="${pos}">${head}<span class="txt">${esc(it.label)}</span></div>`;
+      }).join('');
+      weeksHtml += `<div class="c-week" style="grid-template-rows:${rowsTpl};row-gap:${dim.gap}px">${cells}${nums}${segs}</div>`;
+    }
+    return `<div class="c-panel ${dense ? 'c-dense' : 'c-normal'}">
+      <div class="c-wk">${DOW.map(d => `<div>${d}</div>`).join('')}</div>
+      <div class="c-weeks" style="grid-template-rows:repeat(${grid.weeks}, minmax(0, 1fr))">${weeksHtml}</div>
+    </div>`;
+  }
+
+  function tileFallbackInner(it) {
+    return `<div class="t-fb-type">${esc(typeLabel(it.type))}</div>
+      <div class="t-fb-label"><span>${esc(it.label)}</span></div>
+      <div class="t-fb-date">${tokensHtml(dateTokens(it.range, null))}</div>`;
+  }
+
+  function tileImageInner(it) {
+    return `<img crossorigin="anonymous" src="${esc(it.thumb)}" alt="">
+      <div class="t-over">
+        <div class="t-meta"><span class="chip">${esc(typeLabel(it.type))}</span><span class="t-date">${tokensHtml(dateTokens(it.range, null))}</span></div>
+        <div class="t-label">${esc(it.label)}</div>
+      </div>`;
+  }
+
+  function renderTile(items, warns, shown) {
+    const list = items.slice(0, TILE_MAX);
+    if (items.length > TILE_MAX) {
+      warns.push(`タイルは ${TILE_MAX} 件までです。選択中の ${items.length} 件のうち、先頭 ${TILE_MAX} 件だけを載せています。`);
+    } else if (items.length && items.length < TILE_MIN) {
+      warns.push(`タイルは ${TILE_MIN}〜${TILE_MAX} 件で組む想定です（いまは ${items.length} 件）。`);
+    }
+    list.forEach(it => shown.add(it.key));
+    state.tileItems = list;
+    if (!list.length) return '<div class="s-empty">予定が選ばれていません</div>';
+    const lay = tileLayout(list.length, BODY_W, BODY_H, TILE_GAP);
+    const w = Math.floor(lay.w);
+    const h = Math.floor(lay.h);
+    const size = w >= 500 ? 't-l' : w >= 330 ? 't-m' : 't-s';
+    const tiles = list.map((it, i) => {
+      const useImg = it.thumb && !failedThumbs.has(it.thumb);
+      return `<div class="t-tile ty-${esc(it.type)}${useImg ? '' : ' noimg'}" data-i="${i}" style="width:${w}px;height:${h}px">${useImg ? tileImageInner(it) : tileFallbackInner(it)}</div>`;
+    }).join('');
+    return `<div class="t-grid ${size}">${tiles}</div>`;
+  }
+
+  // 読み込めなかったタイル画像は DOM から外して種別色のブロックに置き換える
+  // （img を残すと html-to-image が src="" を読んで書き出し全体が失敗する）
+  function toFallback(img) {
+    failedThumbs.add(img.getAttribute('src'));
+    const tile = img.closest('.t-tile');
+    if (!tile) { img.remove(); return; }
+    const it = state.tileItems[Number(tile.dataset.i)];
+    tile.classList.add('noimg');
+    if (it) tile.innerHTML = tileFallbackInner(it);
+    else img.remove();
+  }
+
+  stage.addEventListener('error', e => {
+    if (e.target instanceof HTMLImageElement) toFallback(e.target);
+  }, true);
+
+  // includePending: 書き出し時は、待ち時間を打ち切った時点で読み込み中のものも代替表示にする
+  function sweepBrokenImages(includePending = false) {
+    stage.querySelectorAll('img').forEach(img => {
+      if (img.complete ? !img.naturalWidth : includePending) toFallback(img);
+    });
+  }
+
+  function renderWarnings(warns) {
+    const el = $('warn');
+    el.hidden = !warns.length;
+    el.innerHTML = warns.map(w => `<p>${esc(w)}</p>`).join('');
+  }
+
+  function renderStage() {
+    clearTimeout(stageTimer);
+    stageTimer = 0;
+    state.version++;
+    // 内容が変わったら、前にできた画像は使えないので片付ける
+    if (state.result) {
+      clearResult();
+      setStatus('');
+    }
+    const p = period();
+    const items = state.cands.filter(c => isChecked(c.row)).map(c => ({
+      key: keyOf(c.row),
+      type: c.row.type,
+      range: c.range,
+      label: labelOf(c.row),
+      thumb: normalizeThumb(c.row.thumbnail)
+    }));
+    const warns = [];
+    const shown = new Set();
+    let body = '';
+    let head = '';
+    if (state.kind === 'calendar') {
+      body = renderCalendar(items, warns, shown);
+      head = headHtml('対象月', `<b>${state.calYear}</b><span class="unit">年</span><b>${state.calMonth + 1}</b><span class="unit">月</span>`);
+    } else {
+      body = state.kind === 'tile' ? renderTile(items, warns, shown) : renderList(items, warns, shown);
+      head = headHtml('対象期間', periodValHtml(p.from, p.to));
+    }
+    if (!items.length) warns.push('予定が選ばれていません。候補一覧でチェックしてください。');
+
+    stage.innerHTML = head + `<div class="s-body">${body}</div>` + footHtml();
+    sweepBrokenImages();
+    renderWarnings(warns);
+
+    // 候補一覧の「選択中だが画像に入っていない」印と件数
+    candsEl.querySelectorAll('.cand').forEach(el => {
+      const c = state.cands[Number(el.dataset.i)];
+      if (!c) return;
+      const k = keyOf(c.row);
+      el.classList.toggle('off', isChecked(c.row) && !shown.has(k));
+    });
+    $('candCount').textContent = `${state.cands.length} 件・選択 ${items.length} 件`;
+    $('monthLabel').textContent = `${state.calYear}年${state.calMonth + 1}月`;
+  }
+
+  // ===== プレビューの縮小表示（transform は stage ではなく外側の .scaler に掛ける） =====
+  const previewEl = $('preview');
+  const scalerEl = $('scaler');
+  function fitPreview() {
+    const s = Math.min(1, previewEl.clientWidth / 1200);
+    scalerEl.style.transform = `scale(${s})`;
+    previewEl.style.height = `${Math.round(675 * s)}px`;
+  }
+  new ResizeObserver(fitPreview).observe(previewEl);
+  fitPreview();
+
+  // ===== 操作 =====
+  $('kindSeg').addEventListener('click', e => {
+    const b = e.target.closest('button[data-kind]');
+    if (!b) return;
+    state.kind = b.dataset.kind;
+    $('kindSeg').querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
+    $('monthNav').hidden = state.kind !== 'calendar';
+    renderStage();
+  });
+
+  function shiftMonth(n) {
+    const d = new Date(state.calYear, state.calMonth + n, 1);
+    state.calYear = d.getFullYear();
+    state.calMonth = d.getMonth();
+    renderStage();
+  }
+  $('prevMonth').addEventListener('click', () => shiftMonth(-1));
+  $('nextMonth').addEventListener('click', () => shiftMonth(1));
+
+  // 見出しの入力欄は編集モードのときだけ DOM に出す
+  if (EDIT) {
+    const badge = document.createElement('p');
+    badge.className = 'edit-badge';
+    badge.textContent = '編集モード：見出しとラベルを書き換えられます（保存はされません）';
+    document.querySelector('.lead').after(badge);
+    const sec = document.createElement('section');
+    sec.className = 'sec';
+    sec.innerHTML = `<label class="sec-label" for="heading">見出し</label>
+      <input type="text" class="text" id="heading" value="${esc(state.heading)}">`;
+    $('kindSec').after(sec);
+    $('heading').addEventListener('input', e => {
+      state.heading = e.target.value;
+      renderStageSoon();
+    });
+  }
+
+  const fromInput = $('fromDate');
+  const toInput = $('toDate');
+  fromInput.value = toInputValue(state.from);
+  toInput.value = toInputValue(state.to);
+  function syncCalMonth() {
+    const f = period().from;
+    state.calYear = f.getFullYear();
+    state.calMonth = f.getMonth();
+  }
+  syncCalMonth();
+  fromInput.addEventListener('change', () => {
+    const d = parseYMD(fromInput.value);
+    if (!d) return;
+    state.from = d;
+    syncCalMonth();
+    renderCandidates();
+    renderStage();
+  });
+  toInput.addEventListener('change', () => {
+    const d = parseYMD(toInput.value);
+    if (!d) return;
+    state.to = d;
+    syncCalMonth();
+    renderCandidates();
+    renderStage();
+  });
+
+  $('typeFilter').innerHTML = TYPE_ORDER.map(t =>
+    `<label class="ty-${t}"><input type="checkbox" value="${t}" checked><span class="dot"></span>${esc(typeLabel(t))}</label>`).join('');
+  $('typeFilter').addEventListener('change', e => {
+    if (e.target.type !== 'checkbox') return;
+    if (e.target.checked) state.types.add(e.target.value);
+    else state.types.delete(e.target.value);
+    renderCandidates();
+    renderStage();
+  });
+
+  // ===== 書き出し =====
+  function setStatus(msg, isErr) {
+    statusEl.textContent = msg;
+    statusEl.classList.toggle('err', !!isErr);
+  }
+  function setBusy(b) {
+    makeBtn.disabled = b;
+    $('actions').querySelectorAll('button').forEach(x => { x.disabled = b; });
+  }
+
+  function readAsDataUrl(blob) {
+    return new Promise((resolve, reject) => {
+      const r = new FileReader();
+      r.onload = () => resolve(r.result);
+      r.onerror = () => reject(r.error);
+      r.readAsDataURL(blob);
+    });
+  }
+
+  // 失敗した Promise はキャッシュから外し、次の書き出しで取り直す
+  function cached(map, key, make) {
+    if (!map.has(key)) {
+      const p = make();
+      map.set(key, p);
+      p.catch(() => { if (map.get(key) === p) map.delete(key); });
+    }
+    return map.get(key);
+  }
+
+  // 応答が返ってこない通信で書き出しが止まらないよう、本文の読み込みまで含めて打ち切る
+  function fetchWithTimeout(url, read, ms = 10000) {
+    const ctl = new AbortController();
+    const timer = setTimeout(() => ctl.abort(), ms);
+    return fetch(url, {mode: 'cors', signal: ctl.signal})
+      .then(res => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return read(res);
+      })
+      .finally(() => clearTimeout(timer));
+  }
+
+  function withTimeout(promise, ms, message) {
+    let timer;
+    const limit = new Promise((_, reject) => { timer = setTimeout(() => reject(new Error(message)), ms); });
+    return Promise.race([promise, limit]).finally(() => clearTimeout(timer));
+  }
+
+  const fontFileCache = new Map();   // フォントファイルの URL → data URL
+  const fontCssCache = new Map();    // 文字の集合 → 埋め込み用 CSS
+  function fontFileDataUrl(url) {
+    return cached(fontFileCache, url, () => fetchWithTimeout(url, res => res.blob())
+      .then(readAsDataUrl));
+  }
+
+  // 画像に出てくる文字だけのフォント（数十 KB）を取り寄せ、url(...) を data URL に置き換えた CSS を作る
+  function subsetFontCss(text) {
+    const chars = fontChars(text);
+    return cached(fontCssCache, chars, () => fetchWithTimeout(fontCssUrl(chars), res => res.text())
+      .then(css => {
+        const urls = cssUrls(css);
+        if (!urls.length) throw new Error('フォントの URL が見つかりません');
+        return Promise.all(urls.map(u => fontFileDataUrl(u).then(d => [u, d])))
+          .then(pairs => replaceCssUrls(css, Object.fromEntries(pairs)));
+      }));
+  }
+
+  // 取り寄せに失敗したときだけ、従来どおり読み込み済みの @font-face を全部埋め込む（約 4.4MB）
+  let fullFontCssPromise = null;
+  function fullFontCss() {
+    if (!fullFontCssPromise) {
+      fullFontCssPromise = document.fonts.ready
+        .then(() => window.htmlToImage.getFontEmbedCSS(stage))
+        .catch(err => { fullFontCssPromise = null; throw err; });
+    }
+    return fullFontCssPromise;
+  }
+
+  async function getFontCss() {
+    try {
+      return await subsetFontCss(stage.textContent);
+    } catch (err) {
+      console.warn('文字を絞ったフォントを取得できなかったため、全体の埋め込みに切り替えます', err);
+    }
+    try {
+      return await withTimeout(fullFontCss(), 20000, 'フォントの取得に時間がかかりすぎました');
+    } catch (err) {
+      // それも駄目なら、フォントを埋め込まずに（端末の標準フォントで）書き出す
+      console.warn('フォントを埋め込まずに書き出します', err);
+      return null;
+    }
+  }
+
+  // 応答が返ってこない画像で書き出しが止まらないよう、最大 8 秒で打ち切る
+  function waitStageImages(timeoutMs = 8000) {
+    const imgs = Array.from(stage.querySelectorAll('img'));
+    const all = Promise.all(imgs.map(img => img.complete ? null : new Promise(res => {
+      img.addEventListener('load', res, {once: true});
+      img.addEventListener('error', res, {once: true});
+    })));
+    return Promise.race([all, new Promise(res => setTimeout(res, timeoutMs))]);
+  }
+
+  // 書き出しの準備。待っている間に内容が変わったら（画像・文字が変わるので）最初からやり直す
+  // 戻り値の version は、準備した時点の内容の版
+  async function exportOptions() {
+    if (!window.htmlToImage) throw new Error('画像をつくる機能（html-to-image）を読み込めませんでした');
+    for (;;) {
+      if (stageTimer) renderStage();   // 入力の反映待ち（150ms）が残っていれば先に反映する
+      const v = state.version;
+      await document.fonts.ready;
+      await waitStageImages();
+      sweepBrokenImages(true);
+      await new Promise(res => requestAnimationFrame(() => res()));
+      const fontEmbedCSS = await getFontCss();
+      const opts = fontEmbedCSS ? {pixelRatio: 2, fontEmbedCSS} : {pixelRatio: 2, skipFonts: true};
+      if (v === state.version && !stageTimer) return {opts, version: v};
+    }
+  }
+
+  function fileName() {
+    return `hakababunko-${state.kind}-${ymdCompact(new Date())}.png`;
+  }
+
+  const errText = err => (err && err.message ? err.message : String(err));
+
+  // ----- できあがった画像 -----
+  // 2 段階方式: 「画像をつくる」で先に PNG（Blob）を用意し、保存・コピー・共有はその Blob をクリック直後に同期で渡す。
+  // 書き出しを待ってから share() を呼ぶとユーザー操作の有効期限が切れて NotAllowedError になるため
+  function clearResult() {
+    if (!state.result) return;
+    URL.revokeObjectURL(state.result.url);
+    state.result = null;
+    resultImg.removeAttribute('src');
+    resultEl.hidden = true;
+  }
+
+  function showResult(blob) {
+    clearResult();
+    const name = fileName();
+    let file = null;
+    try { file = new File([blob], name, {type: 'image/png'}); } catch (e) { file = null; }
+    state.result = {blob, file, name, url: URL.createObjectURL(blob)};
+    resultImg.src = state.result.url;   // 長押しで保存できるようにページ上にも出す
+    resultEl.hidden = false;
+  }
+
+  // 環境が対応しているボタンだけを置く
+  $('actions').innerHTML = [
+    '<button type="button" class="btn" id="saveBtn">PNGを保存</button>',
+    canCopy ? '<button type="button" class="btn" id="copyBtn">画像をコピー</button>' : '',
+    canShareFiles ? '<button type="button" class="btn primary" id="shareBtn">共有</button>' : ''
+  ].join('');
+
+  makeBtn.addEventListener('click', async () => {
+    setBusy(true);
+    setStatus('画像をつくっています…');
+    try {
+      const {opts, version: v} = await exportOptions();
+      const tooLong = '時間がかかりすぎたので中断しました。もう一度お試しください';
+      if (IS_WEBKIT) {
+        for (let i = 0; i < WEBKIT_WARMUP; i++) await withTimeout(window.htmlToImage.toCanvas(stage, opts), 30000, tooLong);
+      }
+      const blob = await withTimeout(window.htmlToImage.toBlob(stage, opts), 30000, tooLong);
+      if (!blob) throw new Error('画像を作れませんでした');
+      if (v !== state.version || stageTimer) {
+        setStatus('つくっている間に内容が変わったので、もう一度「画像をつくる」を押してください。', true);
+        return;
+      }
+      showResult(blob);
+      setStatus(canShareFiles ? '画像ができました。共有・保存ができます。' : '画像ができました。保存してから X に添付してください。');
+    } catch (err) {
+      console.error(err);
+      setStatus(`画像をつくれませんでした: ${errText(err)}`, true);
+    } finally {
+      setBusy(false);
+    }
+  });
+
+  // PNG の保存は data URL ではなく Blob URL で（iOS Safari 対策）。使い終わったら revoke する
+  $('saveBtn').addEventListener('click', () => {
+    if (!state.result) return;
+    const url = URL.createObjectURL(state.result.blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = state.result.name;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 60000);   // すぐ revoke すると Safari でダウンロードが始まらないことがある
+    setStatus(`保存しました（${state.result.name}）。保存されていないときは、下の画像を長押ししてください。`);
+  });
+
+  if (canCopy) {
+    $('copyBtn').addEventListener('click', () => {
+      if (!state.result) return;
+      navigator.clipboard.write([new ClipboardItem({'image/png': state.result.blob})])
+        .then(() => setStatus('コピーしました。X の投稿欄に貼り付けできます。'))
+        .catch(err => {
+          console.error(err);
+          setStatus(`コピーできませんでした: ${errText(err)}`, true);
+        });
+    });
+  }
+
+  if (canShareFiles) {
+    $('shareBtn').addEventListener('click', () => {
+      const file = state.result && state.result.file;
+      if (!file || !navigator.canShare({files: [file]})) {
+        setStatus('この環境では画像を共有できません。保存してから X に添付してください。', true);
+        return;
+      }
+      navigator.share({files: [file]})
+        .then(() => setStatus(''))
+        .catch(err => {
+          if (err && err.name === 'AbortError') { setStatus(''); return; }   // 共有シートを閉じただけ
+          console.error(err);
+          setStatus(`共有できませんでした: ${errText(err)}`, true);
+        });
+    });
+  }
+
+  // ===== 起動 =====
+  if (!window.htmlToImage) setStatus('画像をつくる機能を読み込めませんでした。時間をおいて開き直してください。', true);
+
+  fetch('data.json', {cache: 'no-store'})
+    .then(res => {
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return res.json();
+    })
+    .then(json => {
+      state.data = (Array.isArray(json) ? json : []).map((r, i) => Object.assign({}, r, {_i: i}));
+      renderCandidates();
+      renderStage();
+      // 今の画像に出ている文字のフォントだけを裏で先に取り寄せておく（失敗しても全体の埋め込みには切り替えない）
+      if (window.htmlToImage) setTimeout(() => { subsetFontCss(stage.textContent).catch(() => {}); }, 800);
+    })
+    .catch(err => {
+      console.error(err);
+      candsEl.innerHTML = '<p class="empty-note">予定のデータを読み込めませんでした。時間をおいて開き直してください。</p>';
+      renderStage();
+    });
+})();
+</script>
+</body>
+</html>
