@@ -87,6 +87,16 @@
   .monthnav span{font-size:15px;font-weight:700}
   .soft-btn{min-height:40px;padding:0 14px;border:0;border-radius:10px;background:#fff;color:var(--accent);font-size:14px;font-weight:700;cursor:pointer}
   .soft-btn:hover{background:#e6f2f9}
+  .theme-block{margin-top:20px}
+  .sub-q{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 10px;margin:0 0 10px;font-size:15px;font-weight:700}
+  .sub-hint{font-size:12px;font-weight:500;color:var(--ink2)}
+  .themes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .theme{display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-height:58px;padding:10px 12px;border:2px solid transparent;border-radius:12px;background:#f3f8fb;color:var(--ink);text-align:left;cursor:pointer;transition:background .15s,border-color .15s}
+  .theme:hover{background:#eaf3f9}
+  .theme.on{border-color:var(--accent);background:#e6f2f9}
+  .theme:focus-visible{outline:3px solid rgba(46,127,174,.35);outline-offset:2px}
+  .theme-name{font-size:14px;font-weight:700;line-height:1.4}
+  .theme-sub{font-family:"Outfit","Zen Kaku Gothic New",sans-serif;font-size:12px;font-weight:500;line-height:1.4;color:var(--ink2)}
 
   /* 2. 予定えらび（絞り込みは折りたたんで控えめに） */
   .filters{margin:0 0 14px;border-radius:12px;background:#f3f8fb}
@@ -358,6 +368,10 @@
         <span id="monthLabel"></span>
         <button type="button" class="soft-btn" id="nextMonth">次の月 →</button>
       </div>
+      <div class="theme-block">
+        <p class="sub-q">画像のテーマ<span class="sub-hint">えらぶと、見出しと期間が変わります</span></p>
+        <div class="themes" id="themeSeg"></div>
+      </div>
     </section>
 
     <section class="step">
@@ -480,34 +494,85 @@ function overlapsPeriod(range, from, to) {
   return dayNum(range.start) <= dayNum(to) && dayNum(range.end) >= dayNum(from);
 }
 
-// 初期選択: 公開 かつ start_date が期間内に始まる行だけ（前から続いている開催中の行は手で選ぶ）
-function isDefaultSelected(row, today, from, to) {
-  if (row.status !== '公開') return false;
-  const s = parseYMD(row.start_date);
-  if (!s) return false;
-  return dayNum(s) >= dayNum(from) && dayNum(s) <= dayNum(to);
+function inDays(d, from, to) {
+  return !!d && dayNum(d) >= dayNum(from) && dayNum(d) <= dayNum(to);
 }
 
-// 開催日の並び: start_date 昇順（なければ end_date）。同じなら終わる日、投稿日時の順
+// 初期選択（公開の行だけ）。basis で基準を切り替える
+//   event:  start_date が期間内に始まる行（前から続いている開催中の行は手で選ぶ）
+//   posted: 投稿日（date）が期間内の行（「今週のまとめ」＝その週に告知された新着）
+function isDefaultSelected(row, today, from, to, basis) {
+  if (row.status !== '公開') return false;
+  return inDays(parseYMD(basis === 'posted' ? row.date : row.start_date), from, to);
+}
+
+// 開催日の並び: start_date 昇順（なければ end_date、それもなければ投稿日）。同じなら終わる日、投稿日時の順
 function eventKey(row) {
-  const d = parseYMD(row.start_date) || parseYMD(row.end_date);
+  const d = parseYMD(row.start_date) || parseYMD(row.end_date) || parseYMD(row.date);
   return d ? dayNum(d) : Infinity;
+}
+
+function endKey(c) {
+  return c.range && c.range.end ? dayNum(c.range.end) : eventKey(c.row);
 }
 
 function compareByEvent(a, b) {
   return (eventKey(a.row) - eventKey(b.row)) ||
-    (dayNum(a.range.end) - dayNum(b.range.end)) ||
+    (endKey(a) - endKey(b)) ||
     String(a.row.date || '').localeCompare(String(b.row.date || ''));
 }
 
-// 候補一覧: 公開・種別が一致・期間に重なる行を、開催日の順で並べる（画像の中の並びもこの順）
+// 候補一覧: 公開・種別が一致し、期間に当てはまる行を開催日の順で並べる（画像の中の並びもこの順）
+//   basis=event:  開催期間が期間に重なる行
+//   basis=posted: 投稿日が期間内の行（開催日の有無や重なりは問わない）
 function buildCandidates(data, opts) {
   const types = opts.types instanceof Set ? opts.types : new Set(opts.types);
+  const fits = opts.basis === 'posted'
+    ? c => inDays(parseYMD(c.row.date), opts.from, opts.to)
+    : c => overlapsPeriod(c.range, opts.from, opts.to);
   return data
     .filter(r => r.status === '公開' && types.has(r.type))
     .map(r => ({row: r, range: rowRange(r)}))
-    .filter(c => overlapsPeriod(c.range, opts.from, opts.to))
+    .filter(fits)
     .sort(compareByEvent);
+}
+
+// ---- 画像のテーマ（見出しと期間） ----
+const THEME_ORDER = ['upcoming', 'thisweek', 'nextweek', 'thismonth'];
+const THEMES = {upcoming: 'これからの予定', thisweek: '今週のまとめ', nextweek: '来週の予定', thismonth: '今月の予定'};
+
+// その日を含む週の月曜日（週は月曜はじまり）
+function weekStart(d) {
+  return addDays(d, -((d.getDay() + 6) % 7));
+}
+
+// テーマごとの期間と基準
+function themePeriod(theme, today) {
+  if (theme === 'thisweek') {
+    const s = weekStart(today);
+    return {from: s, to: addDays(s, 6), basis: 'posted'};
+  }
+  if (theme === 'nextweek') {
+    const s = addDays(weekStart(today), 7);
+    return {from: s, to: addDays(s, 6), basis: 'event'};
+  }
+  if (theme === 'thismonth') {
+    const g = monthGrid(today.getFullYear(), today.getMonth());
+    return {from: g.first, to: g.last, basis: 'event'};
+  }
+  return {from: today, to: addDays(today, 30), basis: 'event'};
+}
+
+// テーマか月の指定から、期間・基準・見出しを決める。month（{year, month}）があればそちらを優先し、見出しは「YYYY年M月の予定」
+// monthMode: カレンダーで月を送ったとき、期間と見出しもその月に合わせる
+function themeSetup(theme, month, today) {
+  if (month) {
+    const g = monthGrid(month.year, month.month);
+    return {theme: null, basis: 'event', from: g.first, to: g.last, heading: `${month.year}年${month.month + 1}月の予定`, monthMode: true};
+  }
+  const t = THEME_ORDER.includes(theme) ? theme : 'upcoming';
+  const p = themePeriod(t, today);
+  return {theme: t, basis: p.basis, from: p.from, to: p.to, heading: THEMES[t], monthMode: t === 'thismonth'};
 }
 
 // 告知の投稿日時 "2026/1/16 12:04" "2026/01/14 12:15:16" "2026-01-22" を並べ替え用の数値にする（split で読む。読めなければ null）
@@ -717,10 +782,11 @@ function listLayout(n, innerW, innerH) {
   return {rowH, pad, thumbW, thumbH, size: 'l' + count};
 }
 
-// URL の指定（?kind=calendar&month=2026-11&edit=1）を読む。不正な値は null（＝今の既定値のまま）
+// URL の指定（?kind=calendar&month=2026-11&theme=thisweek&edit=1）を読む。不正な値は null（＝今の既定値のまま）
 function parseShareParams(search) {
   const q = new URLSearchParams(String(search || ''));
   const kind = q.get('kind');
+  const theme = q.get('theme');
   const m = /^(\d{4})-(\d{2})$/.exec(q.get('month') || '');
   let month = null;
   if (m) {
@@ -730,6 +796,7 @@ function parseShareParams(search) {
   }
   return {
     kind: ['list', 'calendar', 'tile'].includes(kind) ? kind : null,
+    theme: THEME_ORDER.includes(theme) ? theme : null,
     month,
     edit: q.get('edit') === '1'
   };
@@ -821,14 +888,19 @@ function isWebKitUA(ua) {
 
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  // 最初のテーマ。month 指定があればその月（見出しは「YYYY年M月の予定」）、なければ theme 指定（既定は「これからの予定」）
+  const INIT = themeSetup(PARAMS.theme, PARAMS.month, today);
 
   const state = {
     data: [],
     kind: PARAMS.kind || 'list',
-    heading: 'これからの予定',
-    // month 指定があればその月の 1 日〜末日。なければ今日から 30 日後まで
-    from: PARAMS.month ? monthGrid(PARAMS.month.year, PARAMS.month.month).first : today,
-    to: PARAMS.month ? monthGrid(PARAMS.month.year, PARAMS.month.month).last : addDays(today, 30),
+    theme: INIT.theme,          // 選んでいるテーマ（月の見出しのときは null）
+    basis: INIT.basis,          // 候補と初期選択の基準（event: 開催日 / posted: 投稿日）
+    heading: INIT.heading,
+    headingAuto: true,          // 見出しが自動のままか（編集モードで書きかえたら false）
+    monthMode: INIT.monthMode,  // カレンダーで月を送ったら、期間と見出しもその月に合わせる
+    from: INIT.from,
+    to: INIT.to,
     types: new Set(TYPE_ORDER),
     checked: new Map(),   // 手で触った行だけ（key → bool）。触っていない行は初期選択の規則に従う
     labels: new Map(),    // 編集したラベル（key → 文字列）。保存はしない
@@ -859,7 +931,7 @@ function isWebKitUA(ua) {
     const k = keyOf(row);
     if (state.checked.has(k)) return state.checked.get(k);
     const p = period();
-    return isDefaultSelected(row, today, p.from, p.to);
+    return isDefaultSelected(row, today, p.from, p.to, state.basis);
   }
 
   function labelOf(row) {
@@ -888,13 +960,14 @@ function isWebKitUA(ua) {
     const yrTo = p.to.getFullYear() !== p.from.getFullYear() ? `${p.to.getFullYear()}年` : '';
     const types = state.types.size === TYPE_ORDER.length ? 'すべての種類'
       : state.types.size ? TYPE_ORDER.filter(t => state.types.has(t)).map(typeLabel).join('・') : '種類がえらばれていません';
-    $('filterNow').textContent = `いま：${yr}${md(p.from)}〜${yrTo}${md(p.to)}・${types}`;
+    const when = state.basis === 'posted' ? 'に告知' : '';
+    $('filterNow').textContent = `いま：${yr}${md(p.from)}〜${yrTo}${md(p.to)}${when}・${types}`;
   }
 
   // 期間・種類が変わったときに候補を作り直す
   function renderCandidates() {
     const p = period();
-    state.cands = buildCandidates(state.data, {from: p.from, to: p.to, types: state.types});
+    state.cands = buildCandidates(state.data, {from: p.from, to: p.to, types: state.types, basis: state.basis});
     renderFilterNow();
     renderCandList();
   }
@@ -1061,8 +1134,13 @@ function isWebKitUA(ua) {
     items.forEach((it, idx) => {
       if (!outside.includes(idx) && !hidden.has(idx)) shown.add(it.key);
     });
-    if (outside.length) {
-      warns.push(`カレンダーには ${m + 1} 月の予定だけがのります。ほかの月の ${outside.length} 件はのっていません。`);
+    // 日付のない行（「今週のまとめ」で入ることがある）は、ほかの月とは分けて知らせる
+    const noDate = outside.filter(idx => !items[idx].range || !items[idx].range.start).length;
+    if (outside.length - noDate) {
+      warns.push(`カレンダーには ${m + 1} 月の予定だけがのります。ほかの月の ${outside.length - noDate} 件はのっていません。`);
+    }
+    if (noDate) {
+      warns.push(`日付のない予定 ${noDate} 件は、カレンダーにはのりません。`);
     }
     if (hidden.size) {
       warns.push(`予定が多くて、日の枠に入りきらないものが ${hidden.size} 件あります。その日の右上に「+件数」を出しています。`);
@@ -1193,10 +1271,13 @@ function isWebKitUA(ua) {
     let head = '';
     if (state.kind === 'calendar') {
       body = renderCalendar(items, warns, shown);
-      head = headHtml('この月の予定', `<b>${state.calYear}</b><span class="unit">年</span><b>${state.calMonth + 1}</b><span class="unit">月</span>`);
+      // 投稿日で選ぶテーマ（今週のまとめ）は、月の予定一覧と読まれないよう対象の期間を出す
+      head = state.basis === 'posted'
+        ? headHtml('この期間の新着', periodValHtml(p.from, p.to))
+        : headHtml('この月の予定', `<b>${state.calYear}</b><span class="unit">年</span><b>${state.calMonth + 1}</b><span class="unit">月</span>`);
     } else {
       body = state.kind === 'tile' ? renderTile(items, warns, shown) : renderList(items, warns, shown);
-      head = headHtml('この期間の予定', periodValHtml(p.from, p.to));
+      head = headHtml(state.basis === 'posted' ? 'この期間の新着' : 'この期間の予定', periodValHtml(p.from, p.to));
     }
     if (!items.length) warns.push('予定がまだ選ばれていません。下の一覧から、のせたい予定にチェックを入れてください。');
 
@@ -1248,10 +1329,16 @@ function isWebKitUA(ua) {
     renderStage();
   });
 
+  // 月を送る。月の見出し（URL の month 指定・「今月の予定」）のときは、期間と見出しもその月に合わせる
+  // それ以外のテーマでは、今までどおりカレンダーの表示月だけが変わる
   function shiftMonth(n) {
     const d = new Date(state.calYear, state.calMonth + n, 1);
     state.calYear = d.getFullYear();
     state.calMonth = d.getMonth();
+    if (state.monthMode) {
+      setPeriodFrom(themeSetup(null, {year: state.calYear, month: state.calMonth}, today), false);
+      renderCandidates();
+    }
     renderStage();
   }
   $('prevMonth').addEventListener('click', () => shiftMonth(-1));
@@ -1270,6 +1357,7 @@ function isWebKitUA(ua) {
     $('kindSec').after(sec);
     $('heading').addEventListener('input', e => {
       state.heading = e.target.value;
+      state.headingAuto = false;
       renderStageSoon();
     });
   }
@@ -1284,10 +1372,12 @@ function isWebKitUA(ua) {
     state.calMonth = f.getMonth();
   }
   syncCalMonth();
+  // 期間を手で変えたら、見出しはそのまま。月送りでの期間の追従もやめる
   fromInput.addEventListener('change', () => {
     const d = parseYMD(fromInput.value);
     if (!d) return;
     state.from = d;
+    state.monthMode = false;
     syncCalMonth();
     renderCandidates();
     renderStage();
@@ -1296,6 +1386,52 @@ function isWebKitUA(ua) {
     const d = parseYMD(toInput.value);
     if (!d) return;
     state.to = d;
+    state.monthMode = false;
+    syncCalMonth();
+    renderCandidates();
+    renderStage();
+  });
+
+  // ----- 画像のテーマ -----
+  // themeSetup の結果を state に入れる。見出しは自動のままか、テーマを選び直したとき（force）だけ書きかえる
+  function setPeriodFrom(setup, force) {
+    state.theme = setup.theme;
+    state.basis = setup.basis;
+    state.from = setup.from;
+    state.to = setup.to;
+    state.monthMode = setup.monthMode;
+    if (force || state.headingAuto) {
+      state.heading = setup.heading;
+      state.headingAuto = true;
+      if (EDIT) $('heading').value = setup.heading;
+    }
+    fromInput.value = toInputValue(state.from);
+    toInput.value = toInputValue(state.to);
+    renderThemeButtons();
+  }
+
+  const mdText = d => `${d.getMonth() + 1}/${d.getDate()}`;
+  $('themeSeg').innerHTML = THEME_ORDER.map(t => {
+    const p = themePeriod(t, today);
+    const sub = `${mdText(p.from)}〜${mdText(p.to)}${p.basis === 'posted' ? ' の新着' : ''}`;
+    return `<button type="button" class="theme" data-theme="${t}" aria-pressed="false"><span class="theme-name">${esc(THEMES[t])}</span><span class="theme-sub">${esc(sub)}</span></button>`;
+  }).join('');
+
+  function renderThemeButtons() {
+    $('themeSeg').querySelectorAll('button[data-theme]').forEach(x => {
+      const on = x.dataset.theme === state.theme;
+      x.classList.toggle('on', on);
+      x.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+  }
+  renderThemeButtons();
+
+  // テーマを選ぶと、期間・初期選択・見出しを計算し直す。分かりやすさを優先して、手で触ったチェックも新しいテーマの初期選択に置きかえる
+  $('themeSeg').addEventListener('click', e => {
+    const b = e.target.closest('button[data-theme]');
+    if (!b) return;
+    setPeriodFrom(themeSetup(b.dataset.theme, null, today), true);
+    state.checked.clear();
     syncCalMonth();
     renderCandidates();
     renderStage();
