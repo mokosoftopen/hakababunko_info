@@ -647,7 +647,9 @@ function card(item){
   return wrap;
 }
 function getEventStatus(item) {
+  // 日付単位で比べる（終了日の当日は「いま開催中」。カードの表示や share.html と同じ）
   const today = new Date();
+  today.setHours(0, 0, 0, 0);
   const startDate = item.start_date ? new Date(item.start_date) : null;
   const endDate = item.end_date ? new Date(item.end_date) : null;
   
