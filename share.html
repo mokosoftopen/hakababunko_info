@@ -120,6 +120,10 @@
   .only{display:inline-flex;align-items:center;gap:8px;min-height:38px;font-size:13px;color:var(--ink);cursor:pointer}
   .only input{width:18px;height:18px;margin:0;accent-color:var(--accent)}
   .count{margin:0 0 10px;font-size:14px;color:var(--ink2)}
+  .count-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:4px 12px;margin:0 0 10px}
+  .count-row .count{margin:0}
+  .link-btn{background:none;border:none;padding:8px 2px;color:var(--accent);font:inherit;font-size:14px;font-weight:700;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+  .link-btn:disabled{color:var(--ink2);text-decoration:none;opacity:.6;cursor:default}
   .warn{margin:0 0 12px;padding:10px 14px;border-radius:12px;background:var(--today-bg);font-size:13px;line-height:1.7}
   .warn[hidden]{display:none}
   .warn p{margin:0}
@@ -390,7 +394,10 @@
           <label class="only"><input type="checkbox" id="candOnly">えらんだ予定だけ表示する</label>
         </div>
       </div>
-      <p class="count" id="candCount"></p>
+      <div class="count-row">
+        <p class="count" id="candCount"></p>
+        <button type="button" class="link-btn" id="candClear">チェックをすべて外す</button>
+      </div>
       <div class="warn" id="warn" hidden></div>
       <div class="cands" id="cands"><p class="empty-note">予定を読み込んでいます…</p></div>
     </section>
@@ -901,6 +908,7 @@ function isWebKitUA(ua) {
     const picked = state.cands.filter(c => isChecked(c.row)).length;
     const shown = isFiltering() ? `・表示中 ${state.visibleCount} 件` : '';
     $('candCount').textContent = `えらんだ予定：${picked} 件（候補は ${state.cands.length} 件${shown}）`;
+    $('candClear').disabled = picked === 0;
   }
 
   // 候補一覧を描く。並び替え・キーワード・「えらんだ予定だけ」は表示だけに効かせ、行の data-i は state.cands の添字のまま
@@ -950,6 +958,13 @@ function isWebKitUA(ua) {
     const c = state.cands[Number(e.target.closest('.cand').dataset.i)];
     if (!c) return;
     state.checked.set(keyOf(c.row), e.target.checked);
+    renderStage();
+  });
+
+  // 候補をすべて外す（検索などで一覧に出ていない行も含める）
+  $('candClear').addEventListener('click', () => {
+    state.cands.forEach(c => state.checked.set(keyOf(c.row), false));
+    renderCandList();
     renderStage();
   });
 
